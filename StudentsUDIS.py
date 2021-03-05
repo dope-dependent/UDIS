@@ -13,10 +13,9 @@ class StudentMainMenu:
         # root.minsize(400, 300)
         # root.maxsize(800, 600)
         # root.geometry('800x600')
-        global root_
-        root_ = root
+        
 
-        self.frame = Frame(root)
+        self.frame = Frame(root,bg="red")
         self.frame.grid(row=0, column=0, sticky='nsew')
 
         self.add_button_StudentMainMenu = Button(self.frame, text="Add New Student",
@@ -32,7 +31,7 @@ class StudentMainMenu:
                                                  command=self.add_command_StudentMainMenu)
 
         self.exit_button_StudentMainMenu = Button(self.frame, text="Exit", command=exit)
-        self.back_button_StudentMainMenu = Button(self.frame, text="Back", command=self.back_command_StudentMainMenu)
+        self.back_button_StudentMainMenu = Button(self.frame, text="Back", command=lambda:self.back_command_StudentMainMenu(root))
 
         self.add_button_StudentMainMenu.grid(row=0, column=0, columnspan=2)
         self.reg_button_StudentMainMenu.grid(row=1, column=0, columnspan=2)
@@ -42,24 +41,24 @@ class StudentMainMenu:
         self.exit_button_StudentMainMenu.grid(row=4, column=0)
         self.back_button_StudentMainMenu.grid(row=4, column=1)
 
-        root.columnconfigure(0, weight=1)
-        root.columnconfigure(1, weight=1)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.columnconfigure(1, weight=1)
 
-        root.rowconfigure(0, weight=1)
-        root.rowconfigure(1, weight=1)
-        root.rowconfigure(2, weight=1)
-        root.rowconfigure(3, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.rowconfigure(1, weight=1)
+        self.frame.rowconfigure(2, weight=1)
+        self.frame.rowconfigure(3, weight=1)
 
-        root.mainloop()
+        # root.mainloop()
 
-    def back_command_StudentMainMenu(self):
+    def back_command_StudentMainMenu(self,root):
         print("Back")
-        self.clear()
+        self.clear(root)
 
     def add_command_StudentMainMenu(self):
         print("Add command \n")
 
-    def clear(self):
+    def clear(self,root):
         global root_
         self.frame.destroy()
         # self.add_button_StudentMainMenu.destroy()
@@ -68,7 +67,7 @@ class StudentMainMenu:
         # self.grade_button_StudentMainMenu.destroy()
         # self.exit_button_StudentMainMenu.destroy()
         # self.back_button_StudentMainMenu.destroy()
-        ES.ES(root_)
+        ES.ES(root)
 
 if __name__ == '__main__':
     root = Tk()
