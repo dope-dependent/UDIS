@@ -1,34 +1,33 @@
 from tkinter import *
 import ES
+import Home
+import StudentsNew
 
 global root_
 
 class StudentMainMenu:
     def __init__(self, root):
         root.title("UDIS - Student")
-
-
         # Only for unit testing
         #
         # root.minsize(400, 300)
         # root.maxsize(800, 600)
         # root.geometry('800x600')
-        
 
         self.frame = Frame(root,bg="red")
         self.frame.grid(row=0, column=0, sticky='nsew')
 
         self.add_button_StudentMainMenu = Button(self.frame, text="Add New Student",anchor=W,
-                                                 command = self.add_command_StudentMainMenu)
+                                                 command = lambda: self.add_command_StudentMainMenu(root))
 
         self.reg_button_StudentMainMenu = Button(self.frame, text="Register Courses",anchor=W,
-                                                 command=self.add_command_StudentMainMenu)
+                                                 command= lambda: self.add_command_StudentMainMenu(root))
 
         self.view_button_StudentMainMenu = Button(self.frame, text="View Student",anchor=W,
-                                                 command=self.add_command_StudentMainMenu)
+                                                 command=lambda: self.add_command_StudentMainMenu(root))
 
         self.grade_button_StudentMainMenu = Button(self.frame, text="Enter Student Grades",anchor=W,
-                                                 command=self.add_command_StudentMainMenu)
+                                                 command=lambda: self.add_command_StudentMainMenu(root))
 
         self.exit_button_StudentMainMenu = Button(self.frame, text="Exit", command=exit)
         self.back_button_StudentMainMenu = Button(self.frame, text="Back", command=lambda:self.back_command_StudentMainMenu(root))
@@ -54,12 +53,15 @@ class StudentMainMenu:
 
     def back_command_StudentMainMenu(self,root):
         print("Back")
-        self.clear(root)
+        self.clear()
+        Home.Home(root)
 
-    def add_command_StudentMainMenu(self):
+    def add_command_StudentMainMenu(self, root):
         print("Add command \n")
+        self.clear()
+        StudentsNew.StudentNew(root)
 
-    def clear(self,root):
+    def clear(self):
         global root_
         self.frame.destroy()
         # self.add_button_StudentMainMenu.destroy()
@@ -68,7 +70,6 @@ class StudentMainMenu:
         # self.grade_button_StudentMainMenu.destroy()
         # self.exit_button_StudentMainMenu.destroy()
         # self.back_button_StudentMainMenu.destroy()
-        ES.ES(root)
 
 if __name__ == '__main__':
     root = Tk()
