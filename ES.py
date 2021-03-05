@@ -10,7 +10,7 @@ class ES:
         root_ = root
         root.title("Not ERP")
 
-        self.frame = Frame(root)
+        self.frame = Frame(root,bg="white")
         # self.frame.pack(fill=BOTH, expand=True)
         self.frame.grid(row=0, column=0, sticky='nsew')
         # root.minsize(400, 300)
