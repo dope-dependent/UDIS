@@ -20,13 +20,13 @@ class ES:
         # root.maxsize(800, 600)
         # root.geometry('800x600')
 
-        self.id_label_ES = Label(self.frame,text="User ID  ", bg='white')
+        self.id_label_ES = Label(self.frame,text="User ID  ", bg='white',fg='black')
         self.id_label_ES.grid(row=0, column=0, sticky='se', padx=10, pady=5)
 
         self.id_entry_ES = Entry(self.frame)
         self.id_entry_ES.grid(row=0, column=1, sticky='sw', padx=10, pady=5)
 
-        self.password_label_ES = Label(self.frame, text="Password" , bg='white')
+        self.password_label_ES = Label(self.frame, text="Password" , bg='white',fg='black')
         self.password_label_ES.grid(row=1, column=0, sticky='ne', padx=10, pady=5)
         self.password_entry_ES = Entry(self.frame)
         self.password_entry_ES.grid(row=1, column=1, sticky='nw', padx=10, pady=5)

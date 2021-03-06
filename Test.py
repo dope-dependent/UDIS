@@ -1,4 +1,5 @@
 from ES import ES
+import StudentsNew as SN
 from tkinter import *
 
 
@@ -10,4 +11,4 @@ if __name__ == '__main__':
     root.configure(background="blue")
     root.columnconfigure(0,weight=1)
     root.rowconfigure(0,weight=1)
-    ES(root)
+    SN.StudentNew(root)
