@@ -3,8 +3,16 @@ from tkinter import messagebox
 import tkinter.ttk as ttk
 import StudentsUDIS
 import Home
+import sqlite3
 
 global root_
+
+
+def get_student_db_ES():
+    connect_ = sqlite3.connect('Backend/UDIS.db')
+    cursor_ = connect_.cursor()
+    return connect_, cursor_
+
 
 
 class ES:

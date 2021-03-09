@@ -2,6 +2,9 @@ from tkinter import *
 import StudentsUDIS
 import Home
 import tkinter.ttk as ttk
+import ES
+import sqlite3
+from tkinter import messagebox
 
 def dropdown_defocus_StudentNew(event):
     event.widget.selection_clear()
@@ -9,6 +12,7 @@ def dropdown_defocus_StudentNew(event):
 
 class StudentNew:
     def __init__(self, root):
+               
         self.parent = Frame(root)
         self.parent.grid(row=0, column=0, sticky='nsew')
        
@@ -30,13 +34,13 @@ class StudentNew:
         # root.geometry('800x600')
 
         self.name_label_StudentNew = Label(self.frame, text='Name',bg="white",fg="black")
-        self.name_entry_StudentNew = Entry(self.frame)
+        self.name_entry_StudentNew = Entry(self.frame, borderwidth=0)
         self.roll_label_StudentNew = Label(self.frame, text='Roll No',bg="white",fg="black")
-        self.roll_entry_StudentNew = Entry(self.frame)
+        self.roll_entry_StudentNew = Entry(self.frame, borderwidth=0)
         self.address_label_StudentNew = Label(self.frame, text='Address',bg="white",fg="black")
-        self.address_text_StudentNew = Text(self.frame, height=5, width=7)
+        self.address_text_StudentNew = Text(self.frame, height=5, width=7, borderwidth=0)
         self.year_label_StudentNew = Label(self.frame, text='Year of Joining',bg="white",fg="black")
-        self.year_entry_StudentNew = Entry(self.frame)
+        self.year_entry_StudentNew = Entry(self.frame, borderwidth=0)
 
 
         self.combostyle=ttk.Style()
@@ -56,7 +60,7 @@ class StudentNew:
         
 
 
-        self.submit_button_StudentNew = Button(self.frame, text='Submit')
+        self.submit_button_StudentNew = Button(self.frame, text='Submit', command=lambda: self.formsubmit_command_StudentNew(root))
         self.exit_button_StudentNew = Button(self.frame, text="Exit", command=exit)
         self.back_button_StudentNew = Button(self.frame, text="Back",
                                                   command=lambda: self.back_command_StudentNew(root))
@@ -91,9 +95,31 @@ class StudentNew:
         root.maxsize(800, 600)
         StudentsUDIS.StudentMainMenu(root)
 
-    def formsubmit_command_StudentNew(self):
-        root.maxsize(800, 600)
-        self.clear()
+    def formsubmit_command_StudentNew(self, root):
+        name_ = self.name_entry_StudentNew.get()
+        roll_no_ = self.roll_entry_StudentNew.get().upper()
+        address_ = self.address_text_StudentNew.get(1.0, END).strip('\n')
+        course_ = self.course_dropdown_StudentNew.get()
+        year_ = self.year_entry_StudentNew.get()
+        # print(repr(name_))
+        # print(repr(roll_no_))
+        # print(repr(address_))
+        # print(repr(course_))
+        # print(repr(year_))
+
+        connect_, cursor_ = ES.get_student_db_ES()
+        with connect_:
+            try:
+                cursor_.execute("INSERT INTO student VALUES (:roll, :name, :address, :course, :joining)",
+                                {'roll': roll_no_, 'name': name_, 'address': address_, 'course': course_,
+                                 'joining': year_})
+                root.maxsize(800, 600)
+                self.clear()
+            except sqlite3.IntegrityError:
+                messagebox.showwarning("ERROR", "Roll Number already exists")
+
+            # cursor_.execute("SELECT * FROM student WHERE student_name=?", (name_,))
+            # print(cursor_.fetchall())
 
     def clear(self):
         self.parent.destroy()
