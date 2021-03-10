@@ -2,6 +2,7 @@ from tkinter import *
 import ES
 import Home
 import StudentsNew
+import StudentsView
 
 global root_
 
@@ -24,7 +25,7 @@ class StudentMainMenu:
                                                  command= lambda: self.add_command_StudentMainMenu(root))
 
         self.view_button_StudentMainMenu = Button(self.frame, text="View Student",anchor=W,
-                                                 command=lambda: self.add_command_StudentMainMenu(root))
+                                                 command=lambda: self.view_command_StudentMainMenu(root))
 
         self.grade_button_StudentMainMenu = Button(self.frame, text="Enter Student Grades",anchor=W,
                                                  command=lambda: self.add_command_StudentMainMenu(root))
@@ -61,6 +62,11 @@ class StudentMainMenu:
         print("Add command \n")
         self.clear()
         StudentsNew.StudentNew(root)
+
+    def view_command_StudentMainMenu(self, root):
+        print("View command \n")
+        self.clear()
+        StudentsView.StudentsView(root)
 
     def clear(self):
         global root_

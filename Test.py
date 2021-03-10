@@ -3,6 +3,7 @@ import StudentsNew as SN
 from tkinter import *
 import os
 from sqlite3 import *
+import StudentsView
 
 
 def init_sql():
@@ -37,4 +38,5 @@ if __name__ == '__main__':
     root.columnconfigure(0,weight=1)
     root.rowconfigure(0,weight=1)
     connect_, cursor_ = init_sql()
-    SN.StudentNew(root)
+    # SN.StudentNew(root)
+    StudentsView.StudentsView(root)
