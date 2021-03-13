@@ -1,6 +1,7 @@
 from tkinter import *
 import ES
 import StudentsUDIS
+import DepartmentUDIS
 
 class Home:
     def __init__(self, root):
@@ -17,7 +18,7 @@ class Home:
         self.student_button_Home = Button(self.frame, text='  Student  ', command=lambda : self.student_command_Home(root))
         self.student_button_Home.grid(row=1, column=0, sticky='nsew')
 
-        self.department_button_Home = Button(self.frame, text='Department')
+        self.department_button_Home = Button(self.frame, text='Department', command=lambda : self.department_command_Home(root))
         self.department_button_Home.grid(row=1, column=1, sticky='nsew')
 
 
@@ -36,6 +37,10 @@ class Home:
     def student_command_Home(self, root):
         self.clear()
         StudentsUDIS.StudentMainMenu(root)
+
+    def department_command_Home(self, root):
+        self.clear()
+        DepartmentUDIS.DepartmentMainMenu(root)
 
     def back_command_Home(self, root):
         self.clear()

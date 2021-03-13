@@ -1,9 +1,10 @@
-from ES import ES
+import ES
 import StudentsNew as SN
 from tkinter import *
 import os
 from sqlite3 import *
 import StudentsView
+import Home
 
 
 def init_sql():
@@ -39,5 +40,5 @@ if __name__ == '__main__':
     root.rowconfigure(0,weight=1)
     connect_, cursor_ = init_sql()
     # SN.StudentNew(root)
-    StudentsView.StudentsView(root)
+    ES.ES(root)
 

@@ -10,6 +10,7 @@ class StudentsView:
         self.frame = Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
 
+
         self.name_label_StudentsView = Label(self.frame, text='Name', fg="black")
         self.name_entry_StudentsView = Entry(self.frame, borderwidth=0)
         self.roll_label_StudentsView = Label(self.frame, text='Roll No', fg="black")
@@ -31,8 +32,8 @@ class StudentsView:
         self.submit_button_StudentsView.grid(row=4, column=0,columnspan=2,pady=20)
         self.display_frame_StudentsView.grid(row=5, column=0,columnspan=2)
 
-        self.exit_button_StudentNew.grid(row=8, column=0, pady=10, sticky=S + W)
-        self.back_button_StudentNew.grid(row=8, column=1, pady=10, sticky=S + E)
+        self.exit_button_StudentNew.grid(row=8, column=0, padx=50, pady=50, sticky=S + W)
+        self.back_button_StudentNew.grid(row=8, column=1, padx=50, pady=50, sticky=S + E)
 
 
 
@@ -77,10 +78,21 @@ class StudentsView:
 
 
     def display_students(self, root, list_):
+        # TODO
+        # Add scroll bar
+        # Fix Width
+        # Fix exit and back button
         # textbox_text_StudentView = Text(self.display_frame_StudentsView)
         # textbox_text_StudentView.grid(row=1, column=0)
         self.display_frame_StudentsView.destroy()
         self.display_frame_StudentsView = Frame(self.frame)
+
+        # Adding Scrollbar
+        # scrollbar_StudentsView = Scrollbar(self.frame, orient='vertical')
+        # self.display_frame_StudentsView = Frame(self.frame) #, yscrollcommand=scrollbar_StudentsView.set)
+        # # scrollbar_StudentsView.config(command=self.display_frame_StudentsView.yview)
+        # scrollbar_StudentsView.grid(row=0, column=3, rowspan=6)
+
         self.display_frame_StudentsView.grid(row=5, column=0, columnspan=2)
         for i in range(len(list_)):
             studentserial_Label_StudentsView = Label(self.display_frame_StudentsView, anchor=W, text=i+1)
