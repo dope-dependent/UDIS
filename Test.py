@@ -23,7 +23,7 @@ def init_sql():
 
             cursor_.execute("""
                     CREATE TABLE all_courses
-                        (sub_code text UNIQUE, course_name text, prof_name text)""")
+                        (sub_code text UNIQUE, course_name text, prof_name text, credits int)""")
     else:
         connect_ = connect(file_name)
         cursor_ = connect_.cursor()

@@ -3,6 +3,7 @@ import ES
 import Home
 import StudentsNew
 import StudentsView
+import RegisterCoursesSearch
 
 global root_
 
@@ -22,7 +23,7 @@ class StudentMainMenu:
                                                  command = lambda: self.add_command_StudentMainMenu(root))
 
         self.reg_button_StudentMainMenu = Button(self.frame, text="Register Courses",anchor=W,
-                                                 command= lambda: self.add_command_StudentMainMenu(root))
+                                                 command= lambda: self.register_command_StudentMainMenu(root))
 
         self.view_button_StudentMainMenu = Button(self.frame, text="View Student",anchor=W,
                                                  command=lambda: self.view_command_StudentMainMenu(root))
@@ -67,6 +68,11 @@ class StudentMainMenu:
         print("View command \n")
         self.clear()
         StudentsView.StudentsView(root)
+    
+    def register_command_StudentMainMenu(self,root):
+        self.clear()
+        RegisterCoursesSearch.RegisterCoursesSearch(root)
+
 
     def clear(self):
         global root_

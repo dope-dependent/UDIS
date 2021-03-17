@@ -37,6 +37,8 @@ class CoursesNew:
         self.coursecode_entry_CoursesNew = Entry(self.frame, borderwidth=0)
         self.coursename_label_CoursesNew = Label(self.frame, text='Course Name',bg="white",fg="black")
         self.coursename_entry_CoursesNew = Entry(self.frame, borderwidth=0)
+        self.credit_label_CoursesNew=Label(self.frame, text='Number of credits',bg="white",fg="black")
+        self.credit_entry_CoursesNew=Entry(self.frame, borderwidth=0)
         
         self.professorname_label_CoursesNew = Label(self.frame, text='Professor name',bg="white",fg="black")
         self.professorname_entry_CoursesNew = Entry(self.frame, borderwidth=0)
@@ -49,12 +51,12 @@ class CoursesNew:
 
         self.var=StringVar(self.frame)
         self.var.set("Select Semester")
-        self.course_label_CoursesNew=Label(self.frame,text="Course",bg="white",fg="black")
-        self.course_dropdown_CoursesNew=ttk.Combobox(self.frame,foreground="black",width=27,takefocus=False,textvariable=self.var,state='readonly')
-        self.course_dropdown_CoursesNew['value']=('Autumn',
-                                                'Spring',
-                                                'Both')
-        self.course_dropdown_CoursesNew.bind("<FocusIn>", dropdown_defocus_CoursesNew)
+        # self.course_label_CoursesNew=Label(self.frame,text="Course",bg="white",fg="black")
+        # self.course_dropdown_CoursesNew=ttk.Combobox(self.frame,foreground="black",width=27,takefocus=False,textvariable=self.var,state='readonly')
+        # self.course_dropdown_CoursesNew['value']=('Autumn',
+        #                                         'Spring',
+        #                                         'Both')
+        # self.course_dropdown_CoursesNew.bind("<FocusIn>", dropdown_defocus_CoursesNew)
         
 
 
@@ -71,8 +73,10 @@ class CoursesNew:
     
         self.professorname_label_CoursesNew.grid(row=4,column=0,sticky=E,padx=5,pady=3)
         self.professorname_entry_CoursesNew.grid(row=4,column=1,sticky=W+E)
-        self.course_label_CoursesNew.grid(row=5,column=0,sticky=E,padx=5,pady=3)
-        self.course_dropdown_CoursesNew.grid(row=5,column=1,sticky=W+E)
+        self.credit_label_CoursesNew.grid(row=5,column=0,sticky=E,padx=5,pady=3)
+        self.credit_entry_CoursesNew.grid(row=5,column=1,sticky=W+E)
+        # self.course_label_CoursesNew.grid(row=5,column=0,sticky=E,padx=5,pady=3)
+        # self.course_dropdown_CoursesNew.grid(row=5,column=1,sticky=W+E)
 
 
         self.submit_button_CoursesNew.grid(row=7, column=0, columnspan=2,pady=20)
@@ -93,22 +97,22 @@ class CoursesNew:
         DepartmentCourses.DepartmentCoursesView(root)
 
     def formsubmit_command_CoursesNew(self, root):
-        name_ = self.name_entry_CoursesNew.get()
-        coursename_no_ = self.coursename_entry_CoursesNew.get().upper()
-        address_ = self.address_text_CoursesNew.get(1.0, END).strip('\n')
-        course_ = self.course_dropdown_CoursesNew.get()
-        year_ = self.year_entry_CoursesNew.get()
+        coursecode_ = self.coursecode_entry_CoursesNew.get().upper()
+        coursename_ = self.coursename_entry_CoursesNew.get()
+        professorname_=self.professorname_entry_CoursesNew.get()
+        credits_=self.credit_entry_CoursesNew.get()
+        
 
-        connect_, cursor_ = ES.get_Courses_db_ES()
+        connect_, cursor_ = ES.get_student_db_ES()
         with connect_:
             try:
-                cursor_.execute("INSERT INTO all_courses VALUES (:sub_code, :course_name,:prof_name)",
-                                {'coursename': coursename_no_, 'name': name_, 'address': address_, 'course': course_,
-                                 'joining': year_})
+                cursor_.execute("INSERT INTO all_courses VALUES (:sub_code, :course_name,:prof_name,:credits)",
+                                {'sub_code': coursecode_, 'course_name':coursename_,'prof_name': professorname_,
+                                'credits':credits_})
                 root.maxsize(800, 600)
                 # self.clear()
             except sqlite3.IntegrityError:
-                messagebox.showwarning("ERROR", "coursename Number already exists")
+                messagebox.showwarning("ERROR", "Course code already exists")
 
             # cursor_.execute("SELECT * FROM Courses WHERE Courses_name=?", (name_,))
             # print(cursor_.fetchall())
