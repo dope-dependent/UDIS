@@ -2,6 +2,7 @@ from tkinter import *
 import ES
 from tkinter import messagebox
 import DepartmentAcademic
+import CoursesNew
 
 class DepartmentCoursesView:
     def __init__(self, root):
@@ -15,14 +16,14 @@ class DepartmentCoursesView:
 
         # TODO
         # Semester Based Query
-        # self.roll_label_DepartmentCourses = Label(self.frame, text='Roll No', fg="black")
-        # self.roll_entry_DepartmentCourses = Entry(self.frame, borderwidth=0)
+        
 
         self.submit_button_DepartmentCourses= Button(self.frame, text='Search', command=lambda :self.search_command_DepartmentCourses(root))
-
+        self.add_courses_button_DepartmentCourses=Button(self.frame,text='Add Courses',command=lambda:self.add_command_DepartmentCourses(root))
         self.display_frame_CourseView = Frame(self.frame)
         self.course_label_DepartmentCourses.grid(row=2, column=0, padx=5, pady=3)
         self.course_entry_DepartmentCourses.grid(row=2, column=1)
+        
         # self.roll_label_DepartmentCourses.grid(row=3, column=0, padx=5, pady=3)
         # self.roll_entry_DepartmentCourses.grid(row=3, column=1)
 
@@ -31,8 +32,11 @@ class DepartmentCoursesView:
         self.back_button_Department = Button(self.frame, text="Back",
                                              command=lambda: self.back_command_DepartmentCourses(root))
 
+        
         self.submit_button_DepartmentCourses.grid(row=4, column=0,columnspan=2,pady=20)
-        self.display_frame_CourseView.grid(row=5, column=0,columnspan=2)
+        self.add_courses_button_DepartmentCourses.grid(row=5,column=0,columnspan=2,pady=20)
+        self.display_frame_CourseView.grid(row=6, column=0,columnspan=2)
+        
 
         self.exit_button_Department.grid(row=8, column=0, pady=50, padx=50, sticky=S + W)
         self.back_button_Department.grid(row=8, column=1, pady=50, padx=50,  sticky=S + E)
@@ -49,7 +53,7 @@ class DepartmentCoursesView:
         root.mainloop()
 
 
-    def display_students(self, root, list_):
+    def display_courses(self, root, list_):
         # TODO
         # Add scroll bar
         # Fix Width
@@ -92,7 +96,10 @@ class DepartmentCoursesView:
         self.frame.destroy()
 
 
-
+    def add_command_DepartmentCourses(self, root):
+        print("Add command \n")
+        self.clear()
+        CoursesNew.CoursesNew(root)
 
 if __name__ == '__main__':
     root = Tk()

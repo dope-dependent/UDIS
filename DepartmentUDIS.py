@@ -45,7 +45,7 @@ class DepartmentMainMenu:
         self.frame.rowconfigure(2, weight=0)
         self.frame.rowconfigure(3, weight=0)
 
-        # root.mainloop()
+        root.mainloop()
 
     def back_command_DepartmentMainMenu(self,root):
         print("Back")

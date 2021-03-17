@@ -2,6 +2,7 @@ from tkinter import *
 import ES
 from tkinter import messagebox
 import StudentsUDIS
+from ScrollableFrame import ScrollableFrame
 
 class StudentsView:
     def __init__(self, root):
@@ -86,7 +87,8 @@ class StudentsView:
         # textbox_text_StudentView.grid(row=1, column=0)
         self.display_frame_StudentsView.destroy()
         self.display_frame_StudentsView = Frame(self.frame)
-
+        self.display_scrollframe_StudentsView=ScrollableFrame(self.display_frame_StudentsView)
+        self.display_scrollframe_StudentsView.grid(column=0,row=0,sticky="nsew")
         # Adding Scrollbar
         # scrollbar_StudentsView = Scrollbar(self.frame, orient='vertical')
         # self.display_frame_StudentsView = Frame(self.frame) #, yscrollcommand=scrollbar_StudentsView.set)
@@ -95,8 +97,8 @@ class StudentsView:
 
         self.display_frame_StudentsView.grid(row=5, column=0, columnspan=2)
         for i in range(len(list_)):
-            studentserial_Label_StudentsView = Label(self.display_frame_StudentsView, anchor=W, text=i+1)
-            studentrollname_Label_StudentsView = Label(self.display_frame_StudentsView, anchor=W, text=list_[i][0] + '    ' + list_[i][1])
+            studentserial_Label_StudentsView = Label(self.display_scrollframe_StudentsView.scrollable_frame, anchor=W, text=i+1)
+            studentrollname_Label_StudentsView = Label(self.display_scrollframe_StudentsView.scrollable_frame, anchor=W, text=list_[i][0] + '    ' + list_[i][1])
             studentserial_Label_StudentsView.grid(row=i,column=0, sticky=W)
             studentrollname_Label_StudentsView.grid(row=i,column=1, sticky=W)
             studentrollname_Label_StudentsView.bind('<Button-1>', self.viewstudentroll_popup_Command_StudentsView)
