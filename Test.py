@@ -7,6 +7,11 @@ import StudentsView
 import Home
 import DepartmentUDIS
 
+# def get_student_db_ES():
+#     connect_ = sqlite3.connect('Backend/UDIS.db')
+#     cursor_ = connect_.cursor()
+#     return connect_, cursor_
+
 
 def init_sql():
     file_name = 'Backend/UDIS.db'
@@ -41,6 +46,6 @@ if __name__ == '__main__':
     root.rowconfigure(0,weight=1)
     connect_, cursor_ = init_sql()
     # SN.StudentNew(root)
-    # ES.ES(root)
-    DepartmentUDIS.DepartmentMainMenu(root)
+    ES.ES(root)
+    # DepartmentUDIS.DepartmentMainMenu(root)
 

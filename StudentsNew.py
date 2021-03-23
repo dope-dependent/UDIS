@@ -34,13 +34,13 @@ class StudentNew:
         # root.geometry('800x600')
 
         self.name_label_StudentNew = Label(self.frame, text='Name',bg="white",fg="black")
-        self.name_entry_StudentNew = Entry(self.frame, borderwidth=0)
+        self.name_entry_StudentNew = Entry(self.frame, borderwidth=1)
         self.roll_label_StudentNew = Label(self.frame, text='Roll No',bg="white",fg="black")
-        self.roll_entry_StudentNew = Entry(self.frame, borderwidth=0)
+        self.roll_entry_StudentNew = Entry(self.frame, borderwidth=1)
         self.address_label_StudentNew = Label(self.frame, text='Address',bg="white",fg="black")
-        self.address_text_StudentNew = Text(self.frame, height=5, width=7, borderwidth=0)
+        self.address_text_StudentNew = Text(self.frame, height=5, width=7, borderwidth=1)
         self.year_label_StudentNew = Label(self.frame, text='Year of Joining',bg="white",fg="black")
-        self.year_entry_StudentNew = Entry(self.frame, borderwidth=0)
+        self.year_entry_StudentNew = Entry(self.frame, borderwidth=1)
 
 
         self.combostyle=ttk.Style()
