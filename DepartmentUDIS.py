@@ -17,26 +17,26 @@ class DepartmentMainMenu:
         self.frame = Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
 
-        self.inventory_button_StudentMainMenu = Button(self.frame, text="Manage Inventory",anchor=W,
-                                                 command = lambda: self.inventory_command_StudentMainMenu(root))
+        self.inventoryButton = Button(self.frame, text="Manage Inventory",anchor=W,
+                                                 command = lambda: self.inventory(root))
 
-        self.academics_button_StudentMainMenu = Button(self.frame, text="Academic Sexon",anchor=W,
-                                                 command= lambda: self.academics_command_StudentMainMenu(root))
+        self.academicsButton = Button(self.frame, text="Academic Sexon",anchor=W,
+                                                 command= lambda: self.academics(root))
 
-        self.accounts_button_StudentMainMenu = Button(self.frame, text="Account Details",anchor=W,
-                                                 command=lambda: self.accounts_command_StudentMainMenu(root))
+        self.accountsButton = Button(self.frame, text="Account Details",anchor=W,
+                                                 command=lambda: self.accounts(root))
 
-        self.exit_button_StudentMainMenu = Button(self.frame, text="Exit", command=exit)
-        self.back_button_StudentMainMenu = Button(self.frame,
+        self.exitButton = Button(self.frame, text="Exit", command=exit)
+        self.backButton = Button(self.frame,
                                                     text="Back",
-                                                    command=lambda:self.back_command_DepartmentMainMenu(root))
+                                                    command=lambda:self.back(root))
 
-        self.inventory_button_StudentMainMenu.grid(row=0, column=0, columnspan=2,sticky=E+W)
-        self.academics_button_StudentMainMenu.grid(row=1, column=0, columnspan=2,sticky=E+W)
-        self.accounts_button_StudentMainMenu.grid(row=2, column=0, columnspan=2,sticky=E+W)
+        self.inventoryButton.grid(row=0, column=0, columnspan=2,sticky=E+W)
+        self.academicsButton.grid(row=1, column=0, columnspan=2,sticky=E+W)
+        self.accountsButton.grid(row=2, column=0, columnspan=2,sticky=E+W)
 
-        self.exit_button_StudentMainMenu.grid(row=3, column=0,pady=10,sticky=S)
-        self.back_button_StudentMainMenu.grid(row=3, column=1,pady=10,sticky=S)
+        self.exitButton.grid(row=3, column=0,pady=10,sticky=S)
+        self.backButton.grid(row=3, column=1,pady=10,sticky=S)
         self.frame.columnconfigure(0, weight=1)
         self.frame.columnconfigure(1, weight=1)
 
@@ -47,36 +47,27 @@ class DepartmentMainMenu:
 
         root.mainloop()
 
-    def back_command_DepartmentMainMenu(self,root):
-        print("Back")
+    def back(self,root):
         self.clear()
         Home.Home(root)
 
-    def inventory_command_StudentMainMenu(self, root):
+    def inventory(self, root):
         print("Inventory command")
         self.clear()
-        # StudentsNew.StudentNew(root)
+        
 
-    def academics_command_StudentMainMenu(self, root):
-        print("Academics command \n")
+    def academics(self, root):
         self.clear()
         DepartmentAcademic.DepartmentAcademic(root)
 
-    def accounts_command_StudentMainMenu(self, root):
+    def accounts(self, root):
         print("Account command \n")
         self.clear()
-        # StudentsView.StudentsView(root)
+        
 
     def clear(self):
-        global root_
         self.frame.destroy()
-        # self.add_button_StudentMainMenu.destroy()
-        # self.reg_button_StudentMainMenu.destroy()
-        # self.view_button_StudentMainMenu.destroy()
-        # self.grade_button_StudentMainMenu.destroy()
-        # self.exit_button_StudentMainMenu.destroy()
-        # self.back_button_StudentMainMenu.destroy()
-
+       
 if __name__ == '__main__':
     root = Tk()
     DepartmentMainMenu(root)

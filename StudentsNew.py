@@ -1,14 +1,13 @@
 from tkinter import *
-import StudentsUDIS
-import Home
+import StudentMain
 import tkinter.ttk as ttk
 import ES
 import sqlite3
 from tkinter import messagebox
 
+
 def dropdown_defocus_StudentNew(event):
     event.widget.selection_clear()
-
 
 class StudentNew:
     def __init__(self, root):
@@ -33,14 +32,14 @@ class StudentNew:
         root.maxsize(400, 400)
         # root.geometry('800x600')
 
-        self.name_label_StudentNew = Label(self.frame, text='Name',bg="white",fg="black")
-        self.name_entry_StudentNew = Entry(self.frame, borderwidth=1)
-        self.roll_label_StudentNew = Label(self.frame, text='Roll No',bg="white",fg="black")
-        self.roll_entry_StudentNew = Entry(self.frame, borderwidth=1)
-        self.address_label_StudentNew = Label(self.frame, text='Address',bg="white",fg="black")
-        self.address_text_StudentNew = Text(self.frame, height=5, width=7, borderwidth=1)
-        self.year_label_StudentNew = Label(self.frame, text='Year of Joining',bg="white",fg="black")
-        self.year_entry_StudentNew = Entry(self.frame, borderwidth=1)
+        self.nameLabel = Label(self.frame, text='Name',bg="white",fg="black")
+        self.nameEntry = Entry(self.frame, borderwidth=1)
+        self.rollLabel = Label(self.frame, text='Roll No',bg="white",fg="black")
+        self.rollEntry = Entry(self.frame, borderwidth=1)
+        self.addressLabel = Label(self.frame, text='Address',bg="white",fg="black")
+        self.addressText = Text(self.frame, height=5, width=7, borderwidth=1)
+        self.yearLabel = Label(self.frame, text='Year of Joining',bg="white",fg="black")
+        self.yearEntry = Entry(self.frame, borderwidth=1)
 
 
         self.combostyle=ttk.Style()
@@ -50,38 +49,37 @@ class StudentNew:
 
         self.var=StringVar(self.frame)
         self.var.set("Select Course")
-        self.course_label_StudentNew=Label(self.frame,text="Course",bg="white",fg="black")
-        self.course_dropdown_StudentNew=ttk.Combobox(self.frame,foreground="black",width=27,takefocus=False,textvariable=self.var,state='readonly')
-        self.course_dropdown_StudentNew['value']=('B.Tech',
+        self.courseLabel = Label(self.frame,text="Course",bg="white",fg="black")
+        self.courseDropdown = ttk.Combobox(self.frame,foreground="black",width=27,takefocus=False,textvariable=self.var,state='readonly')
+        self.courseDropdown['value']=('B.Tech',
                                                 'M.Tech',
                                                 'PhD',
                                                 'M.Sc')
-        self.course_dropdown_StudentNew.bind("<FocusIn>", dropdown_defocus_StudentNew)
+        self.courseDropdown.bind("<FocusIn>", dropdown_defocus_StudentNew)
         
 
 
-        self.submit_button_StudentNew = Button(self.frame, text='Submit', command=lambda: self.formsubmit_command_StudentNew(root))
-        self.exit_button_StudentNew = Button(self.frame, text="Exit", command=exit)
-        self.back_button_StudentNew = Button(self.frame, text="Back",
-                                                  command=lambda: self.back_command_StudentNew(root))
+        self.submitButton = Button(self.frame, text='Submit', command=lambda: self.formsubmit(root))
+        self.exitButton = Button(self.frame, text="Exit", command=exit)
+        self.backButton = Button(self.frame, text="Back", command=lambda: self.back(root))
         
 
-        self.name_label_StudentNew.grid(row=2, column=0,sticky=E+S,padx=5,pady=3,)
-        self.name_entry_StudentNew.grid(row=2, column=1, sticky=W+S+E)
-        self.roll_label_StudentNew.grid(row=3, column=0,sticky=E,padx=5,pady=3)
-        self.roll_entry_StudentNew.grid(row=3, column=1, sticky=W+E)
-        self.address_label_StudentNew.grid(row=4, column=0,sticky=E,padx=5,pady=3)
-        self.address_text_StudentNew.grid(row=4, column=1,sticky=W+E)
-        self.year_label_StudentNew.grid(row=5,column=0,sticky=E,padx=5,pady=3)
-        self.year_entry_StudentNew.grid(row=5,column=1,sticky=W+E)
-        self.course_label_StudentNew.grid(row=6,column=0,sticky=E,padx=5,pady=3)
-        self.course_dropdown_StudentNew.grid(row=6,column=1,sticky=W+E)
+        self.nameLabel.grid(row=2, column=0,sticky=E+S,padx=5,pady=3,)
+        self.nameEntry.grid(row=2, column=1, sticky=W+S+E)
+        self.rollLabel.grid(row=3, column=0,sticky=E,padx=5,pady=3)
+        self.rollEntry.grid(row=3, column=1, sticky=W+E)
+        self.addressLabel.grid(row=4, column=0,sticky=E,padx=5,pady=3)
+        self.addressText.grid(row=4, column=1,sticky=W+E)
+        self.yearLabel.grid(row=5,column=0,sticky=E,padx=5,pady=3)
+        self.yearEntry.grid(row=5,column=1,sticky=W+E)
+        self.courseLabel.grid(row=6,column=0,sticky=E,padx=5,pady=3)
+        self.courseDropdown.grid(row=6,column=1,sticky=W+E)
 
 
-        self.submit_button_StudentNew.grid(row=7, column=0, columnspan=2,pady=20)
+        self.submitButton.grid(row=7, column=0, columnspan=2,pady=20)
 
-        self.exit_button_StudentNew.grid(row=8, column=0, pady=10, sticky=S+W)
-        self.back_button_StudentNew.grid(row=8, column=1, pady=10, sticky=S+E)
+        self.exitButton.grid(row=8, column=0, pady=10, sticky=S+W)
+        self.backButton.grid(row=8, column=1, pady=10, sticky=S+E)
 
         self.frame.rowconfigure(2,weight=1)
         self.frame.rowconfigure(8,weight=1)
@@ -90,24 +88,19 @@ class StudentNew:
         self.frame.columnconfigure(1, weight=1)
         
         root.mainloop()
-    def back_command_StudentNew(self, root):
+
+    def back(self, root):
         self.clear()
         root.maxsize(800, 600)
-        StudentsUDIS.StudentMainMenu(root)
+        StudentMain.StudentMain(root)
 
-    def formsubmit_command_StudentNew(self, root):
-        name_ = self.name_entry_StudentNew.get()
-        roll_no_ = self.roll_entry_StudentNew.get().upper()
-        address_ = self.address_text_StudentNew.get(1.0, END).strip('\n')
-        course_ = self.course_dropdown_StudentNew.get()
-        year_ = self.year_entry_StudentNew.get()
-        # print(repr(name_))
-        # print(repr(roll_no_))
-        # print(repr(address_))
-        # print(repr(course_))
-        # print(repr(year_))
-
-        connect_, cursor_ = ES.get_student_db_ES()
+    def formsubmit(self, root):
+        name_ = self.nameEntry.get()
+        roll_no_ = self.rollEntry.get().upper()
+        address_ = self.addressText.get(1.0, END).strip('\n')
+        course_ = self.courseDropdown.get()
+        year_ = self.yearEntry.get()
+        connect_, cursor_ = ES.getdb()
         with connect_:
             try:
                 cursor_.execute("INSERT INTO student VALUES (:roll, :name, :address, :course, :joining)",

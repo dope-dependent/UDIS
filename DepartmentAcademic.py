@@ -18,31 +18,32 @@ class DepartmentAcademic:
         self.frame = Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
 
-        self.project_button_DepartmentAcademics = Button(self.frame, text="Research Projects",anchor=W,
-                                                 command = lambda: self.project_command_DepartmentAcademics(root))
+        self.projectButton = Button(self.frame, text="Research Projects",anchor=W,
+                                                 command = lambda: self.project(root))
 
-        self.publications_button_DepartmentAcademics = Button(self.frame, text="Research Publications",anchor=W,
-                                                 command= lambda: self.publications_command_DepartmentAcademics(root))
+        self.publicationsButton = Button(self.frame, text="Research Publications",anchor=W,
+                                                 command= lambda: self.publications(root))
 
-        self.courses_offered_button_DepartmentAcademics = Button(self.frame, text="Courses Offered",anchor=W,
-                                                 command=lambda: self.courses_offered_command_DepartmentAcademics(root))
+        self.coursesButton = Button(self.frame, text="Courses Offered",anchor=W,
+                                                 command=lambda: self.courses(root))
 
-        self.faculty_button_DepartmentAcademics = Button(self.frame, text="Our ""ESTEEMED"" xD Faculty", anchor=W,
-                                                             command=lambda: self.faculty_command_DepartmentAcademics(
+        self.facultyButton = Button(self.frame, text="Our ""ESTEEMED"" xD Faculty", anchor=W,
+                                                             command=lambda: self.faculty(
                                                                  root))
 
-        self.exit_button_DepartmentAcademics = Button(self.frame, text="Exit", command=exit)
-        self.back_button_DepartmentAcademics = Button(self.frame,
+        self.exitButton = Button(self.frame, text="Exit", command=exit)
+        self.backButton = Button(self.frame,
                                                     text="Back",
-                                                    command=lambda:self.back_command_DepartmentAcademics(root))
+                                                    command=lambda:self.back(root))
 
-        self.project_button_DepartmentAcademics.grid(row=0, column=0, columnspan=2,sticky=E+W)
-        self.publications_button_DepartmentAcademics.grid(row=1, column=0, columnspan=2,sticky=E+W)
-        self.courses_offered_button_DepartmentAcademics.grid(row=2, column=0, columnspan=2,sticky=E+W)
-        self.faculty_button_DepartmentAcademics.grid(row=3, column=0, columnspan=2, sticky=E+W)
+        self.projectButton.grid(row=0, column=0, columnspan=2,sticky=E+W)
+        self.publicationsButton.grid(row=1, column=0, columnspan=2,sticky=E+W)
+        self.coursesButton.grid(row=2, column=0, columnspan=2,sticky=E+W)
+        self.facultyButton.grid(row=3, column=0, columnspan=2, sticky=E+W)
 
-        self.exit_button_DepartmentAcademics.grid(row=4, column=0,pady=10,sticky=S)
-        self.back_button_DepartmentAcademics.grid(row=4, column=1,pady=10,sticky=S)
+        self.exitButton.grid(row=4, column=0,pady=10,sticky=S)
+        self.backButton.grid(row=4, column=1,pady=10,sticky=S)
+        
         self.frame.columnconfigure(0, weight=1)
         self.frame.columnconfigure(1, weight=1)
 
@@ -54,33 +55,32 @@ class DepartmentAcademic:
 
         # root.mainloop()
 
-    def back_command_DepartmentAcademics(self,root):
+    def back(self,root):
         print("Back")
         self.clear()
         DepartmentUDIS.DepartmentMainMenu(root)
 
-    def project_command_DepartmentAcademics(self, root):
+    def project_command(self, root):
         print("Project command")
         # self.clear()
-        # StudentsNew.StudentNew(root)
 
-    def publications_command_DepartmentAcademics(self, root):
+
+    def publications(self, root):
         print("Publication command \n")
         # self.clear()
-        # StudentsView.StudentsView(root)
+        
 
-    def courses_offered_command_DepartmentAcademics(self, root):
+    def courses(self, root):
         print("Courses command \n")
         self.clear()
-        DepartmentCourses.DepartmentCoursesView(root)
+        DepartmentCourses.DepartmentCourses(root)
 
-    def faculty_command_DepartmentAcademics(self, root):
+    def faculty(self, root):
         print("Faculty command \n")
         # self.clear()
-        # StudentsView.StudentsView(root)
+
 
     def clear(self):
-        global root_
         self.frame.destroy()
 
 if __name__ == '__main__':

@@ -29,60 +29,42 @@ class CoursesNew:
         self.parent.rowconfigure(0,weight=1)
         self.parent.columnconfigure(0,weight=1)
         self.parent.columnconfigure(2,weight=1)
-        # root.minsize(400, 300)
+       
         root.maxsize(400, 400)
-        # root.geometry('800x600')
-
-        self.coursecode_label_CoursesNew = Label(self.frame, text='Course Code',bg="white",fg="black")
-        self.coursecode_entry_CoursesNew = Entry(self.frame, borderwidth=0)
-        self.coursename_label_CoursesNew = Label(self.frame, text='Course Name',bg="white",fg="black")
-        self.coursename_entry_CoursesNew = Entry(self.frame, borderwidth=0)
-        self.credit_label_CoursesNew=Label(self.frame, text='Number of credits',bg="white",fg="black")
-        self.credit_entry_CoursesNew=Entry(self.frame, borderwidth=0)
-        
-        self.professorname_label_CoursesNew = Label(self.frame, text='Professor name',bg="white",fg="black")
-        self.professorname_entry_CoursesNew = Entry(self.frame, borderwidth=0)
-
-
-        self.combostyle=ttk.Style()
-        self.combostyle.map('TCombobox', fieldbackground=[('readonly', 'white')])
-        self.combostyle.map('TCombobox', selectbackground=[('readonly', 'white')])
-        # self.combostyle.
-
-        self.var=StringVar(self.frame)
-        self.var.set("Select Semester")
-        # self.course_label_CoursesNew=Label(self.frame,text="Course",bg="white",fg="black")
-        # self.course_dropdown_CoursesNew=ttk.Combobox(self.frame,foreground="black",width=27,takefocus=False,textvariable=self.var,state='readonly')
-        # self.course_dropdown_CoursesNew['value']=('Autumn',
-        #                                         'Spring',
-        #                                         'Both')
-        # self.course_dropdown_CoursesNew.bind("<FocusIn>", dropdown_defocus_CoursesNew)
         
 
+        self.coursecodeLabel = Label(self.frame, text='Course Code',bg="white",fg="black")
+        self.coursecodeEntry = Entry(self.frame, borderwidth=0)
+        
+        self.coursenameLabel = Label(self.frame, text='Course Name',bg="white",fg="black")
+        self.coursenameEntry = Entry(self.frame, borderwidth=0)
+        
+        self.creditLabel=Label(self.frame, text='Number of credits',bg="white",fg="black")
+        self.creditEntry=Entry(self.frame, borderwidth=0)
+        
+        self.professornameLabel = Label(self.frame, text='Professor name',bg="white",fg="black")
+        self.professornameEntry = Entry(self.frame, borderwidth=0)
 
-        self.submit_button_CoursesNew = Button(self.frame, text='Submit', command=lambda: self.formsubmit_command_CoursesNew(root))
-        self.exit_button_CoursesNew = Button(self.frame, text="Exit", command=exit)
-        self.back_button_CoursesNew = Button(self.frame, text="Back",
-                                                  command=lambda: self.back_command_CoursesNew(root))
+        self.submitButton = Button(self.frame, text='Submit', command=lambda: self.submit(root))
+        self.exitButton = Button(self.frame, text="Exit", command=exit)
+        self.backButton = Button(self.frame, text="Back",
+                                                  command=lambda: self.back(root))
         
 
-        self.coursecode_label_CoursesNew.grid(row=2, column=0,sticky=E+S,padx=5,pady=3,)
-        self.coursecode_entry_CoursesNew.grid(row=2, column=1, sticky=W+S+E)
-        self.coursename_label_CoursesNew.grid(row=3, column=0,sticky=E,padx=5,pady=3)
-        self.coursename_entry_CoursesNew.grid(row=3, column=1, sticky=W+E)
+        self.coursecodeLabel.grid(row=2, column=0,sticky=E+S,padx=5,pady=3,)
+        self.coursecodeEntry.grid(row=2, column=1, sticky=W+S+E)
+        self.coursenameLabel.grid(row=3, column=0,sticky=E,padx=5,pady=3)
+        self.coursenameEntry.grid(row=3, column=1, sticky=W+E)
     
-        self.professorname_label_CoursesNew.grid(row=4,column=0,sticky=E,padx=5,pady=3)
-        self.professorname_entry_CoursesNew.grid(row=4,column=1,sticky=W+E)
-        self.credit_label_CoursesNew.grid(row=5,column=0,sticky=E,padx=5,pady=3)
-        self.credit_entry_CoursesNew.grid(row=5,column=1,sticky=W+E)
-        # self.course_label_CoursesNew.grid(row=5,column=0,sticky=E,padx=5,pady=3)
-        # self.course_dropdown_CoursesNew.grid(row=5,column=1,sticky=W+E)
+        self.professornameLabel.grid(row=4,column=0,sticky=E,padx=5,pady=3)
+        self.professornameEntry.grid(row=4,column=1,sticky=W+E)
+        self.creditLabel.grid(row=5,column=0,sticky=E,padx=5,pady=3)
+        self.creditEntry.grid(row=5,column=1,sticky=W+E)
 
+        self.submitButton.grid(row=7, column=0, columnspan=2,pady=20)
 
-        self.submit_button_CoursesNew.grid(row=7, column=0, columnspan=2,pady=20)
-
-        self.exit_button_CoursesNew.grid(row=8, column=0, pady=10, sticky=S+W)
-        self.back_button_CoursesNew.grid(row=8, column=1, pady=10, sticky=S+E)
+        self.exitButton.grid(row=8, column=0, pady=10, sticky=S+W)
+        self.backButton.grid(row=8, column=1, pady=10, sticky=S+E)
 
         self.frame.rowconfigure(2,weight=1)
         self.frame.rowconfigure(8,weight=1)
@@ -91,16 +73,16 @@ class CoursesNew:
         self.frame.columnconfigure(1, weight=1)
         
         root.mainloop()
-    def back_command_CoursesNew(self, root):
+    def back(self, root):
         self.clear()
         root.maxsize(800, 600)
-        DepartmentCourses.DepartmentCoursesView(root)
+        DepartmentCourses.DepartmentCourses(root)
 
-    def formsubmit_command_CoursesNew(self, root):
-        coursecode_ = self.coursecode_entry_CoursesNew.get().upper()
-        coursename_ = self.coursename_entry_CoursesNew.get()
-        professorname_=self.professorname_entry_CoursesNew.get()
-        credits_=self.credit_entry_CoursesNew.get()
+    def submit(self, root):
+        coursecode_ = self.coursecodeEntry.get().upper()
+        coursename_ = self.coursenameEntry.get()
+        professorname_=self.professornameEntry.get()
+        credits_=self.creditEntry.get()
         
 
         connect_, cursor_ = ES.get_student_db_ES()
@@ -110,12 +92,10 @@ class CoursesNew:
                                 {'sub_code': coursecode_, 'course_name':coursename_,'prof_name': professorname_,
                                 'credits':credits_})
                 root.maxsize(800, 600)
-                # self.clear()
             except sqlite3.IntegrityError:
                 messagebox.showwarning("ERROR", "Course code already exists")
 
-            # cursor_.execute("SELECT * FROM Courses WHERE Courses_name=?", (name_,))
-            # print(cursor_.fetchall())
+            
 
     def clear(self):
         self.parent.destroy()
