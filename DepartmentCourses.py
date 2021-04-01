@@ -58,11 +58,13 @@ class DepartmentCourses:
         self.displayScrollframe=ScrollableFrame(self.displayFrame)
         self.displayScrollframe.grid(column=0,row=0,sticky="nsew")
         self.displayFrame.grid(row=5, column=0, columnspan=2)
+
+        self.displayScrollframe.frame.columnconfigure(1,weight=1)
         for i in range(len(list_)):
-            courseserialLabel = Label(self.displayScrollframe.scrollable_frame, anchor=W, text=i+1)
-            courserollnameLabel = Label(self.displayScrollframe.scrollable_frame, anchor=W, text=list_[i][0] + '    ' + list_[i][1])
-            courseserialLabel.grid(row=i,column=0, sticky=W)
-            courserollnameLabel.grid(row=i,column=1, sticky=W)
+            courseserialLabel = Label(self.displayScrollframe.frame, anchor=W, text=i+1)
+            courserollnameLabel = Label(self.displayScrollframe.frame, anchor=W, text=list_[i][0] + '    ' + list_[i][1])
+            courseserialLabel.grid(row=i,column=0, sticky=W+E,padx=5)
+            courserollnameLabel.grid(row=i,column=1, sticky=W+E)
             # studentname_Label_DepartmentCourses.bind('<Button-1>', self.viewstudentname_popup_Command_DepartmentCourses)
 
 

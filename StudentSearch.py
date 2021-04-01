@@ -43,12 +43,13 @@ class StudentSearch:
         self.searchResults.destroy()
         self.searchResults = ScrollableFrame(self.frame)
         self.searchResults.grid(row=5, column=0,padx=30, sticky="nsew", columnspan = 2)
+        self.searchResults.frame.columnconfigure(1,weight=1)
 
         for i in range(len(list_)):
-            studentSerial = Label(self.searchResults.scrollable_frame, anchor=W, text=i+1)
-            studentRollAndName = Label(self.searchResults.scrollable_frame, anchor=W, text=list_[i][0] + '    ' + list_[i][1])
-            studentSerial.grid(row=i, column=0, sticky=W)
-            studentRollAndName.grid(row=i, column=1, sticky=W)
+            studentSerial = Label(self.searchResults.frame, anchor=W, text=i+1)
+            studentRollAndName = Label(self.searchResults.frame, anchor=W, text=list_[i][0] + '    ' + list_[i][1])
+            studentSerial.grid(row=i, column=0, sticky=W+E,padx=5)
+            studentRollAndName.grid(row=i, column=1, sticky=W+E)
             studentRollAndName.bind('<Button-1>', self.bindingAction)
 
     def back(self, root):
