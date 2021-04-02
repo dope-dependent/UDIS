@@ -100,7 +100,7 @@ class StudentNew:
         address_ = self.addressText.get(1.0, END).strip('\n')
         course_ = self.courseDropdown.get()
         year_ = self.yearEntry.get()
-        connect_, cursor_ = ES.getdb()
+        connect_, cursor_ = ES.get_student_db_ES()
         with connect_:
             try:
                 cursor_.execute("INSERT INTO student VALUES (:roll, :name, :address, :course, :joining)",

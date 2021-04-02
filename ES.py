@@ -29,8 +29,7 @@ class ES:
 
         style = ttk.Style()
         style.configure('W.TButton', font=
-        ('calibri light', 10, 'underline'),
-                        foreground='red',
+        ('Arial', 10),
                         background='white')
 
         self.submitButton = ttk.Button(self.frame, text="Login", style = 'W.TButton', command=lambda: self.login(root))
@@ -64,5 +63,6 @@ class ES:
 
 if __name__ == '__main__':
     root = Tk()
+
     a = ES(root)
     del a
