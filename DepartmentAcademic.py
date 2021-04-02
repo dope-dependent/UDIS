@@ -3,6 +3,8 @@ import ES
 import Home
 import DepartmentUDIS
 import DepartmentCourses
+import DepartmentProject
+import DepartmentPublication
 
 global root_
 
@@ -60,23 +62,23 @@ class DepartmentAcademic:
         self.clear()
         DepartmentUDIS.DepartmentMainMenu(root)
 
-    def project_command(self, root):
+    def project(self, root):
         print("Project command")
-        # self.clear()
-
+        self.clear()
+        DepartmentProject.DepartmentProject(root)
 
     def publications(self, root):
-        print("Publication command \n")
-        # self.clear()
-        
+        print("Publication command")
+        self.clear()
+        DepartmentPublication.DepartmentPublication(root)
 
     def courses(self, root):
-        print("Courses command \n")
+        print("Courses command")
         self.clear()
         DepartmentCourses.DepartmentCourses(root)
 
     def faculty(self, root):
-        print("Faculty command \n")
+        print("Faculty command")
         # self.clear()
 
 

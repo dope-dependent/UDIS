@@ -36,6 +36,20 @@ class Main():
                 cursor_.execute("""
                                 CREATE TABLE all_courses
                                     (sub_code text UNIQUE, course_name text, prof_name text, credits int)""")
+
+                cursor_.execute("""
+                                CREATE TABLE projects
+                                (organisation text NOT NULL UNIQUE, incharge text NOT NULL, duration text, 
+                                    status text DEFAULT 'Ongoing', name text NOT NULL)""")
+
+                cursor_.execute("""
+                                CREATE TABLE publications
+                                (prof_name text NOT NULL, pub_name text NOT NULL, date text NOT NULL)""")
+
+                cursor_.execute("""
+                                CREATE TABLE inventory 
+                                (item_name text NOT NULL, location text, quantity integer NOT NULL, type text NOT NULL, price integer NOT NULL)""")
+
         else:
             connect_ = connect(file_name)
             cursor_ = connect_.cursor()
