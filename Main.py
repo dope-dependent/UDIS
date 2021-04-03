@@ -50,6 +50,12 @@ class Main():
                                 CREATE TABLE inventory 
                                 (item_name text NOT NULL, location text, quantity integer NOT NULL, type text NOT NULL, price integer NOT NULL)""")
 
+                cursor_.execute("""CREATE TABLE transactions 
+                                (organisation text NOT NULL, amount int, date text NOT NULL, purpose text NOT NULL)""")
+
+                cursor_.execute('''CREATE TABLE total (amount INT)''')
+                cursor_.execute('''INSERT INTO total VALUES (0)''')
+
         else:
             connect_ = connect(file_name)
             cursor_ = connect_.cursor()
