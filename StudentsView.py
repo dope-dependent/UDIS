@@ -157,6 +157,7 @@ class StudentsView (StudentSearch.StudentSearch):
 
         ongoingFrame=Frame(perfView.frame,bg='red')
         ongoingFrame.grid(column=0,row=row_,sticky=E+W,pady=10)
+        # Check if list is empty
         Label(ongoingFrame,text='Ongoing Semester: '+courselist[0][1],relief=GROOVE,anchor=W).grid(row=0,column=0,columnspan=3,sticky=E+W)        
         Label(ongoingFrame,text='Course Code',relief=GROOVE,width=12).grid(row=1,column=0,sticky=E+W)
         Label(ongoingFrame,text='Course Name',relief=GROOVE).grid(row=1,column=1,sticky=E+W)
@@ -176,7 +177,7 @@ class StudentsView (StudentSearch.StudentSearch):
     def getCGPA(self,allCourses):
         
         connect_,cursor_=ES.get_student_db_ES()
-        gradesDict={'Ex':10,'A':9,'B':8,'C':7,'D':6,'P':5,'F':0}
+        gradesDict={'EX':10,'A':9,'B':8,'C':7,'D':6,'P':5,'F':0}
         
         coursesDict={}
         for i in allCourses:
