@@ -36,10 +36,10 @@ class StudentGrades (StudentSearch.StudentSearch):
         popupCourse = Tk()
         popupCourse.eval('tk::PlaceWindow . center')
         popupCourse.config(bg='white')
-        popupCourse.geometry("505x460")
-        popupCourse.minsize(506, 460)
-        popupCourse.maxsize(506, 460)
-        popupCourse.title("Enter grades for " + roll[0])
+        popupCourse.geometry("600x460")
+        popupCourse.minsize(600, 460)
+        popupCourse.maxsize(600, 460)
+        popupCourse.title("Enter grades for " + roll)
 
 
         entryframe = Frame(popupCourse)
@@ -80,12 +80,12 @@ class StudentGrades (StudentSearch.StudentSearch):
             courseDropdown[i].grid(row=i+1, column=3, sticky=E+W)
 
 
-        courseframe.grid(row=1, column=0)
+        courseframe.grid(row=1, column=0,sticky=E+W,columnspan=10)
 
         submitbutton = ttk.Button(master=popupCourse,
                                   text='Submit', command=lambda: self.submit(roll, courses, courseDropdown, popupCourse))
         submitbutton.config(padding = [5,5,5,5])
-        submitbutton.grid(row=4, column=0, columnspan=1)
+        submitbutton.grid(row=4, column=0, columnspan=10)
 
 
         popupCourse.columnconfigure(0, weight=1) # Serial Name of Course

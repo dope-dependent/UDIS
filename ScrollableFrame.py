@@ -2,9 +2,11 @@ import tkinter as tk
 
 class ScrollableFrame(tk.Frame):
     def __init__(self, parent, height=340, width=430):
-
-        tk.Frame.__init__(self, parent)
-        self.canvas = tk.Canvas(self, bd=0, height=height, width=width, background="#ffffff",relief='ridge',highlightthickness=0)
+        
+        tk.Frame.__init__(self, parent,bg='red')
+        tk.Frame.update(self)
+        print(tk.Frame.winfo_width(self))
+        self.canvas = tk.Canvas(self, bd=0, background="#ffffff",relief='ridge',highlightthickness=0)
         self.frame = tk.Frame(self.canvas,bg="#ffffff")
         self.vsb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)

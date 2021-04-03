@@ -17,9 +17,9 @@ class StudentCourses (StudentSearch.StudentSearch):
         popupCourse = Tk()
         popupCourse.eval('tk::PlaceWindow . center')
         popupCourse.config(bg='white')
-        popupCourse.geometry("430x460")
-        popupCourse.minsize(430, 460)
-        popupCourse.maxsize(430, 460)
+        popupCourse.geometry("600x460")
+        popupCourse.minsize(600, 460)
+        popupCourse.maxsize(600, 460)
         rollAndName = event.widget.cget('text')
         roll = rollAndName.split(' ')
         popupCourse.title("Register courses for " + roll[0])
@@ -55,13 +55,14 @@ class StudentCourses (StudentSearch.StudentSearch):
             buttons[i].grid(row=i+1, column=3, sticky=E+W)
             buttons[i].state(['!alternate'])
 
-        courseframe.grid(row=1, column=0)
+        courseframe.frame.columnconfigure(1,weight=1)
+        courseframe.grid(row=1, column=0,columnspan=10,sticky=E+W)
 
         submitbutton = ttk.Button(master=popupCourse,
                                   text='Submit',
                                   command= lambda : self.submit(buttons, sem, courses, roll))
         submitbutton.config(padding = [5,5,5,5])
-        submitbutton.grid(row=4, column=0, columnspan=1)
+        submitbutton.grid(row=4, column=0, columnspan=10)
 
 
         popupCourse.columnconfigure(0, weight=1) # Serial Name of Course

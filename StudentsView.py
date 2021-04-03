@@ -91,27 +91,27 @@ class StudentsView (StudentSearch.StudentSearch):
         perfView.grid(row=1,column=0,sticky="nsew")
         backlogsFrame=Frame(perfView.frame)
         backlogsFrame.grid(row=0,column=0,sticky=E+W,pady=10)
-        
         Label(backlogsFrame,text="Backlogs",anchor=W,relief=GROOVE).grid(row=0,column=0,columnspan=4,sticky=E+W)
-        Label(backlogsFrame,text="Course Code",relief=GROOVE,width=12).grid(row=1,column=0,sticky=E+W)
-        Label(backlogsFrame,text="Course Name",relief=GROOVE).grid(row=1,column=1,sticky=E+W)
-        Label(backlogsFrame,text="Credits",relief=GROOVE,width=12).grid(row=1,column=2,sticky=E+W)
-        Label(backlogsFrame,text="Most Recent semester taken in",relief=GROOVE).grid(row=1,column=3,sticky=E+W)
-        
-        ind=0
-        for i in backlogsDict:
-            cursor_.execute('SELECT course_name,credits FROM all_courses WHERE sub_code=(:code)',{'code':i})
-            info=cursor_.fetchone()
-            Label(backlogsFrame,text=str(i),relief=FLAT).grid(row=2+ind,column=0,sticky=E+W)
-            Label(backlogsFrame,text=str(info[0]),relief=FLAT).grid(row=2+ind,column=1,sticky=E+W)
-            Label(backlogsFrame,text=str(info[1]),relief=FLAT).grid(row=2+ind,column=2,sticky=E+W)
-            Label(backlogsFrame,text=str(backlogsDict[i]),relief=FLAT).grid(row=2+ind,column=3,sticky=E+W)
-            ind=ind+1
-        
+
+        if len(backlogsDict)!=0:
+            Label(backlogsFrame,text="Course Code",relief=GROOVE,width=12).grid(row=1,column=0,sticky=E+W)
+            Label(backlogsFrame,text="Course Name",relief=GROOVE).grid(row=1,column=1,sticky=E+W)
+            Label(backlogsFrame,text="Credits",relief=GROOVE,width=12).grid(row=1,column=2,sticky=E+W)
+            Label(backlogsFrame,text="Most Recent semester taken in",relief=GROOVE).grid(row=1,column=3,sticky=E+W)
+            
+            ind=0
+            for i in backlogsDict:
+                cursor_.execute('SELECT course_name,credits FROM all_courses WHERE sub_code=(:code)',{'code':i})
+                info=cursor_.fetchone()
+                Label(backlogsFrame,text=str(i),relief=FLAT).grid(row=2+ind,column=0,sticky=E+W)
+                Label(backlogsFrame,text=str(info[0]),relief=FLAT).grid(row=2+ind,column=1,sticky=E+W)
+                Label(backlogsFrame,text=str(info[1]),relief=FLAT).grid(row=2+ind,column=2,sticky=E+W)
+                Label(backlogsFrame,text=str(backlogsDict[i]),relief=FLAT).grid(row=2+ind,column=3,sticky=E+W)
+                ind=ind+1
+            backlogsFrame.columnconfigure(3,weight=1)
+        else:
+            Label(backlogsFrame,text="None",anchor=W,relief=GROOVE).grid(row=1,column=0,columnspan=4,sticky=E+W)
         backlogsFrame.columnconfigure(1,weight=1)
-        backlogsFrame.columnconfigure(3,weight=1)
-
-
         ind=2
         for i in semDict:
             self.semPerformance(perfView,ind,i,semDict[i])
@@ -157,26 +157,29 @@ class StudentsView (StudentSearch.StudentSearch):
 
         ongoingFrame=Frame(perfView.frame,bg='red')
         ongoingFrame.grid(column=0,row=row_,sticky=E+W,pady=10)
-        Label(ongoingFrame,text='Ongoing Semester: '+courselist[0][1],relief=GROOVE,anchor=W).grid(row=0,column=0,columnspan=3,sticky=E+W)        
-        Label(ongoingFrame,text='Course Code',relief=GROOVE,width=12).grid(row=1,column=0,sticky=E+W)
-        Label(ongoingFrame,text='Course Name',relief=GROOVE).grid(row=1,column=1,sticky=E+W)
-        Label(ongoingFrame,text='Credits',width=12,relief=GROOVE).grid(row=1,column=2,sticky=E+W)
+                
+        if len(courselist)!=0:
+            Label(ongoingFrame,text='Ongoing Semester: '+courselist[0][1],relief=GROOVE,anchor=W).grid(row=0,column=0,columnspan=3,sticky=E+W)
+            Label(ongoingFrame,text='Course Code',relief=GROOVE,width=12).grid(row=1,column=0,sticky=E+W)
+            Label(ongoingFrame,text='Course Name',relief=GROOVE).grid(row=1,column=1,sticky=E+W)
+            Label(ongoingFrame,text='Credits',width=12,relief=GROOVE).grid(row=1,column=2,sticky=E+W)
 
-        ind=0
-        for i in courselist:
-            cursor_.execute('SELECT course_name,credits FROM all_courses WHERE sub_code=(:code)',{'code':i[0]})
-            info=cursor_.fetchone()
-            Label(ongoingFrame,text=i[0]).grid(row=2+ind,column=0,sticky=E+W)
-            Label(ongoingFrame,text=info[0]).grid(row=2+ind,column=1,sticky=E+W)
-            Label(ongoingFrame,text=info[1]).grid(row=2+ind,column=2,sticky=E+W)
-            ind=ind+1
-
+            ind=0
+            for i in courselist:
+                cursor_.execute('SELECT course_name,credits FROM all_courses WHERE sub_code=(:code)',{'code':i[0]})
+                info=cursor_.fetchone()
+                Label(ongoingFrame,text=i[0]).grid(row=2+ind,column=0,sticky=E+W)
+                Label(ongoingFrame,text=info[0]).grid(row=2+ind,column=1,sticky=E+W)
+                Label(ongoingFrame,text=info[1]).grid(row=2+ind,column=2,sticky=E+W)
+                ind=ind+1
+        else: 
+            Label(ongoingFrame,text='Ongoing Semester: None',relief=GROOVE,anchor=W).grid(row=0,column=0,columnspan=3,sticky=E+W)
         ongoingFrame.columnconfigure(1,weight=1)
 
     def getCGPA(self,allCourses):
         
         connect_,cursor_=ES.get_student_db_ES()
-        gradesDict={'Ex':10,'A':9,'B':8,'C':7,'D':6,'P':5,'F':0}
+        gradesDict={'EX':10,'A':9,'B':8,'C':7,'D':6,'P':5,'F':0}
         
         coursesDict={}
         for i in allCourses:
@@ -189,6 +192,8 @@ class StudentsView (StudentSearch.StudentSearch):
             cgpa=cgpa+credit*gradesDict[coursesDict[i]]
             credits=credits+credit
         
+        if credits==0:
+            return 0
         cgpa=cgpa/credits
         cgpa = "{:.2f}".format(cgpa)
         return cgpa
