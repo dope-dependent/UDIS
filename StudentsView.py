@@ -195,7 +195,7 @@ class StudentsView (StudentSearch.StudentSearch):
 
     def back(self, root):
         self.clear()
-        root.maxsize(600, 500)
+        root.maxsize(800, 600)
         StudentMain.StudentMain(root)
 
 

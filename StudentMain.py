@@ -4,6 +4,7 @@ import Home
 import StudentsNew
 import StudentsView
 import StudentCourses
+import StudentGrades
 
 class StudentMain:
     def __init__(self, root):
@@ -23,7 +24,7 @@ class StudentMain:
         self.viewButton = Button(self.frame, text="View Student", anchor=W,
                                                   command=lambda: self.view(root))
         self.gradeButton = Button(self.frame, text="Enter Student Grades", anchor=W,
-                                                   command=lambda: self.new(root))
+                                                   command=lambda: self.grades(root))
         self.exitButton = Button(self.frame, text="Exit", command=exit)
         self.backButton = Button(self.frame, text="Back", command=lambda: self.back(root))
 
@@ -64,7 +65,9 @@ class StudentMain:
     def clear(self):
         self.frame.destroy()
 
-
+    def grades(self, root):
+        self.clear()
+        StudentGrades.StudentGrades(root)
 
 if __name__ == '__main__':
     root = Tk()
