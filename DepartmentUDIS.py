@@ -2,6 +2,8 @@ from tkinter import *
 import ES
 import Home
 import DepartmentAcademic
+import DepartmentAccount
+import DepartmentInventory
 
 global root_
 
@@ -54,6 +56,7 @@ class DepartmentMainMenu:
     def inventory(self, root):
         print("Inventory command")
         self.clear()
+        DepartmentInventory.DepartmentInventory(root)
         
 
     def academics(self, root):
@@ -63,7 +66,7 @@ class DepartmentMainMenu:
     def accounts(self, root):
         print("Account command \n")
         self.clear()
-        
+        DepartmentAccount.DepartmentAccount(root)
 
     def clear(self):
         self.frame.destroy()

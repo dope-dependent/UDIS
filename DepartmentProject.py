@@ -3,6 +3,7 @@ import DepartmentResearch
 from ScrollableFrame import ScrollableFrame
 import ES
 import ProjectNew
+from tkinter import messagebox
 
 class DepartmentProject(DepartmentResearch.DepartmentResearch):
     def __init__(self, root):
@@ -55,12 +56,21 @@ class DepartmentProject(DepartmentResearch.DepartmentResearch):
         Label(popupProject, text='Status').grid(row=4, column=0, sticky=W, padx=10)
         Label(popupProject, text='Name').grid(row=5, column=0, sticky=W, padx=10)
 
+        Button(popupProject, text='Mark Project as Complete', command=lambda: self.markComplete(projectName)).grid(row=6, column=0, columnspan=2)
+
         Label(popupProject, text=project[0]).grid(row=1, column=1, sticky=W)
         Label(popupProject, text=project[1]).grid(row=2, column=1, sticky=W)
         Label(popupProject, text=project[2]).grid(row=3, column=1, sticky=W)
         Label(popupProject, text=project[3]).grid(row=4, column=1, sticky=W)
         Label(popupProject, text=project[4], anchor=W, justify='left').grid(row=5, column=1, sticky=W)
 
+    def markComplete(self, name):
+        response = messagebox.askyesno(title='Mark Project as Complete', message='Are you sure you want to mark this Project: ' + name + ' as Complete')
+        if response == 'no':
+            return
+        connect_, cursor_ = ES.get_student_db_ES()
+        with connect_:
+            cursor_.execute('''UPDATE projects SET status="Completed" WHERE name=(:name)''', {'name': name})
 
 
     def new(self, root):
