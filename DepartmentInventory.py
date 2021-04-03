@@ -1,0 +1,107 @@
+from tkinter import *
+import tkinter.ttk as ttk
+import ES
+import DepartmentUDIS
+import DepartmentPurchase
+from ScrollableFrame import ScrollableFrame
+
+def dropdown_defocus(event):
+    event.widget.selection_clear()
+
+class DepartmentInventory:
+    def __init__(self,root):
+        self.frame=Frame(root)
+        self.frame.grid(row=0, column=0, sticky='nsew')
+
+        self.itemnameLabel=Label(self.frame,text="Item Name: ",anchor=E)
+        self.itemnameEntry=Entry(self.frame,borderwidth=0,width=27)
+        self.itemtypeLabel=Label(self.frame,text="Type: ",anchor=E)
+
+        self.combostyle=ttk.Style()
+        self.combostyle.map('TCombobox', fieldbackground=[('readonly', 'white')])
+        self.combostyle.map('TCombobox', selectbackground=[('readonly', 'white')])
+        # self.combostyle.
+
+        self.var=StringVar(self.frame)
+        self.var.set("All")
+        self.typeDropdown = ttk.Combobox(self.frame,foreground="black",width=27,takefocus=False,textvariable=self.var,state='readonly')
+        self.typeDropdown['value']=('All',
+                                        'Miscellaneous',
+                                        'Computers',
+                                        'Furniture',
+                                        'Stationery')
+        self.typeDropdown.bind("<FocusIn>", dropdown_defocus)
+
+        self.submitButton=Button(self.frame,text='Search',command=lambda:self.search())
+        self.addButton=Button(self.frame,text='Purchase New Item',command=lambda:self.add(root))
+        self.displayFrame=ScrollableFrame(self.frame)
+
+        self.backButton=Button(self.frame,text="Back",command=lambda: self.back(root))
+        self.exitButton=Button(self.frame,text="Exit",command=exit)
+
+        self.itemnameLabel.grid(row=0,column=0,sticky=E+W,pady=10,padx=10)
+        self.itemnameEntry.grid(row=0,column=1,sticky=W,pady=10)
+        self.itemtypeLabel.grid(row=1,column=0,sticky=E+W,pady=10,padx=10)
+        self.typeDropdown.grid(row=1,column=1,sticky=W,pady=10)
+        self.submitButton.grid(row=2,column=0,sticky=E,pady=10,padx=10)
+        self.addButton.grid(row=2,column=1,sticky=W,pady=10,padx=10)
+        self.displayFrame.grid(row=3,column=0,columnspan=2,sticky="nsew",padx=10,pady=10)
+        self.exitButton.grid(row=4,column=0,columnspan=2,sticky=W,padx=50,pady=20)
+        self.backButton.grid(row=4,column=1,columnspan=2,sticky=E,padx=50,pady=20)
+
+        for i in range(2):
+            self.frame.columnconfigure(i,weight=1)
+        self.frame.rowconfigure(3,weight=1)
+
+    def display(self,list_):
+        self.displayFrame.destroy()
+        self.displayFrame=ScrollableFrame(self.frame)
+        self.displayFrame.grid(row=3,column=0,columnspan=2,sticky="nsew",padx=10,pady=10)
+        # print(list_)
+        Label(self.displayFrame.frame,text='Sl. no.',relief=GROOVE).grid(row=0,column=0,sticky=E+W,padx=2)
+        Label(self.displayFrame.frame,text='Item Name',relief=GROOVE).grid(row=0,column=1,sticky=E+W,padx=2)
+        Label(self.displayFrame.frame,text='Location',relief=GROOVE).grid(row=0,column=2,sticky=E+W,padx=2)
+        Label(self.displayFrame.frame,text='Quanitity',relief=GROOVE).grid(row=0,column=3,sticky=E+W,padx=2)
+        Label(self.displayFrame.frame,text='Type',relief=GROOVE).grid(row=0,column=4,sticky=E+W,padx=2)
+
+        for i in range(len(list_)):
+            itemSerial = Label(self.displayFrame.frame, anchor=W, text=i+1)
+            itemName = Label(self.displayFrame.frame,wraplength=400, anchor=W, text=list_[i][0])
+            itemLocation = Label(self.displayFrame.frame, anchor=W, text=list_[i][1])
+            itemQuantity= Label(self.displayFrame.frame, anchor=W, text=list_[i][2])
+            itemType= Label(self.displayFrame.frame, anchor=W, text=list_[i][3])
+            
+            itemSerial.grid(row=i+1, column=0, sticky=W+E,padx=2,pady=1)
+            itemName.grid(row=i+1, column=1, sticky=W+E,padx=2,pady=1)
+            itemLocation.grid(row=i+1,column=2,sticky=W+E,padx=2,pady=1)
+            itemQuantity.grid(row=i+1,column=3,sticky=W+E,padx=2,pady=1)
+            itemType.grid(row=i+1,column=4,sticky=W+E,padx=2,pady=1)
+            # studentRollAndName.bind('<Button-1>', self.bindingAction)   
+        self.displayFrame.frame.columnconfigure(1,weight=1)  
+    
+    def search(self):
+        connect_, cursor_ = ES.get_student_db_ES()
+        name_ = self.itemnameEntry.get()
+        type_ = self.typeDropdown.get()
+
+        # print(name_,type_)
+        if name_ == "" and type_ == "All":
+            cursor_.execute("SELECT * FROM inventory")
+        elif name_ != "" and type_=="All":
+            cursor_.execute("SELECT * FROM inventory WHERE item_name LIKE (:name)",{'name':'%'+name_+'%'})
+        elif name_ == "" and type_!="All":
+            cursor_.execute("SELECT * FROM inventory WHERE type LIKE (:type)", {'type':'%'+type_+'%'})
+        else:
+            cursor_.execute("SELECT * FROM inventory WHERE item_name LIKE (:name) AND type LIKE (:type)", {'name':'%'+name_+'%', 'type':'%'+type_+'%'})
+        self.display(cursor_.fetchall())
+
+    def add(self,root):
+        self.clear()
+        DepartmentPurchase.DepartmentPurchase(root)
+
+    def back(self,root):
+        self.clear()
+        DepartmentUDIS.DepartmentMainMenu(root)
+
+    def clear(self):
+        self.frame.destroy()
