@@ -1,0 +1,175 @@
+
+Testing the ES class
+	a. Correct user ID correct password:
+	PASS
+	b. Correct user ID wrong password:
+	PASS
+	c. Wrong user ID correct password:
+	PASS
+	a. Wrong user ID wrong password:
+	PASS
+Test cases passed 4/4
+Percentage = 100.0
+Unit Test for the StudentsNew Class
+
+a. Roll number format checking
+	PASS
+	PASS
+b. Year of admission checking
+	PASS
+c. Duplicate Roll No checking
+	PASS
+d. Blank field testing
+	PASS
+	PASS
+e. Course Identifier Testing
+	PASS
+f. Happy Path test
+	PASS
+Test cases passed 8/8
+Percentage = 100.0
+
+Testing the StudentsView class
+	a. Computing the CGPA:
+	PASS
+	b. Cleared backlog courses not to be shown under Backlog:
+	PASS
+	c. Semesters seperated properly:
+	PASS
+Test cases passed 3/3
+Percentage = 100.0
+Testing the DepartmentCourses Class
+
+a. Course Code already present
+	PASS
+b. Credits entered is not a number
+	PASS
+c. Credits is not in the appropriate range of {1, 2, 3, 4, 5}
+	PASS
+	PASS
+d. One or more fields left blank
+	PASS
+	PASS
+	PASS
+	PASS
+e. Happy Path Testing
+	PASS
+	PASS
+	PASS
+	PASS
+f. Searching Courses with empty keyword
+	PASS
+g. Searching Courses with Keyword "Lab"
+	PASS
+h. Searching Courses with Keyword "Software"
+	PASS
+Test cases passed 15/15
+Percentage = 100.0
+
+Testing the StudentsCourses class
+	a. Only non-cleared courses should be displayed
+	PASS
+	b. Backlogged courses are shown
+	PASS
+	c. Cleared Backlogged courses are not shown
+	PASS
+	d. Maximum cap on the number of courses (non-backlog)
+	PASS
+	e. Maximum cap on the number of courses (backlog)
+	PASS
+	f. Check if all registered and not graded courses have a grade of R
+	PASS
+	g. Can register a backlogged course
+	PASS
+	Test cases passed 7/7
+	Percentage = 100.0
+Unit test for StudentGrades class
+	a. Visibility of Courses for Grading
+	PASS
+	b. Empty Columns while Grading
+	PASS
+	c. Happy path, grading subjects
+	PASS
+Test cases passed 3/3
+Percentage = 100.0
+Testing the DepartmentAccount Class
+
+a. Donation amount is not a number
+	PASS
+b. Unnamed Donation
+	PASS
+c. Fund Amount is empty
+	PASS
+d. Purpose is not mentioned
+	PASS
+e. Date format is wrong
+	PASS
+f. Date is Invalid
+	PASS
+g. Happy Path Testing
+	PASS
+Test cases passed 7/7
+Percentage = 100.0
+
+Testing the Department Purchase class
+	a. Happy path:
+	PASS
+	b. Empty fields:
+	PASS
+	c. Quantity of items is negative:
+	PASS
+	d. Price is negative:
+	PASS
+	e. Price is not an integer:
+	PASS
+	f. Price is deducted from total amount:
+	PASS
+	g. Insufficient Amount exception:
+	PASS
+	h. Increase in quantity upon inserting same item
+	PASS
+Test cases passed 8/8
+Percentage = 100.0
+
+Testing the Department Purchase class
+	a. Blank name and type all:
+	PASS
+	b. Specific name and type all:
+	PASS
+	c. No name and type specific:
+	PASS
+	d. Name specific and type specific:
+	PASS
+Test cases passed 4/4
+Percentage = 100.0
+Testing the DepartmentPublication Class
+
+a. Some fields are left empty
+	PASS
+	PASS
+b. Publication already exists
+	PASS
+c. Happy path test
+	PASS
+Test cases passed 4/4
+Percentage = 100.0
+Testing the DepartmentProject Class
+
+a. One or more fields left blank
+	PASS
+	PASS
+	PASS
+	PASS
+	PASS
+	PASS
+b. Invalid funds value
+	PASS
+	PASS
+c. Sufficient Balance not present in the Department Account
+	PASS
+d. Project Name already Exists
+	PASS
+e. Happy Path Testing
+	PASS
+Test cases passed 11/11
+Percentage = 100.0

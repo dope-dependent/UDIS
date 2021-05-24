@@ -60,7 +60,7 @@ class StudentSearch:
         name_ = self.nameEntry.get()
         roll_no_ = self.rollEntry.get()
         if name_ == "" and roll_no_ == "":
-            messagebox.showwarning("ERROR", "Please enter something")
+            cursor_.execute("SELECT * FROM student")
         elif roll_no_ == "":
             cursor_.execute("SELECT * FROM student WHERE student_name LIKE (:name)",{'name':'%'+name_+'%'})
         elif name_ == "":

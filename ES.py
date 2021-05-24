@@ -13,7 +13,7 @@ def get_student_db_ES():
 class ES:
     def __init__(self, root):
 
-        # root.title("Not ERP")
+        root.title("UDIS")
 
         self.frame = Frame(root, bg="white")
         self.frame.grid(row=0, column=0, sticky='nsew')
@@ -24,7 +24,7 @@ class ES:
 
         self.pwLabel = Label(self.frame, text="Password", bg='white',fg='black')
         
-        self.pwEntry = Entry(self.frame)
+        self.pwEntry = Entry(self.frame,show="*")
         
 
         style = ttk.Style()
@@ -46,20 +46,69 @@ class ES:
         self.frame.rowconfigure(1, weight=0)
         self.frame.rowconfigure(2, weight=1)
 
-
+    @staticmethod
+    def authenticate(id_ip,pw_ip):
+        connect_,cursor_ = get_student_db_ES()
+        cursor_.execute('SELECT * FROM authentication')
+        data=cursor_.fetchone()
+        if id_ip==data[0] and pw_ip==data[1]:
+            return True
+        else:
+            return False
 
     def login(self,root):
         id_ip = self.idEntry.get()
         pw_ip = self.pwEntry.get()
-        # DEBUG - Comment out later
-        # print(id_ip_ES)
-        # print(pw_ip_ES)
-        # TODO Add login functionality
-        self.clear()
-        Home.Home(root)
-
+        if ES.authenticate(id_ip,pw_ip):
+            self.clear()
+            Home.Home(root)
+        else:
+            messagebox.showerror("Failed Login", "Invalid Credentials")
+        
     def clear(self):
         self.frame.destroy()
+
+    @staticmethod
+    def test():
+        print("\nTesting the ES class")
+        success = 0
+        fail = 0
+        print("\ta. Correct user ID correct password:")
+        if ES.authenticate("admin","password")==True:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL\n")
+            fail=fail+1
+
+        print("\tb. Correct user ID wrong password:")
+        if ES.authenticate("admin","passwor")==False:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL")
+            fail=fail+1
+        
+        print("\tc. Wrong user ID correct password:")
+        if ES.authenticate("ain","password")==False:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL")
+            fail=fail+1
+        
+        print("\ta. Wrong user ID wrong password:")
+        if ES.authenticate("adin","psword")==False:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL")
+            fail=fail+1
+        
+        print(f'Test cases passed {success}/{success+fail}')
+        print(f'Percentage = {(success/(success+fail))*100}')
+
+
 
 if __name__ == '__main__':
     root = Tk()

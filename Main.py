@@ -2,12 +2,41 @@ from tkinter import *
 import os
 from sqlite3 import *
 import ES
+from tkinter import messagebox
 
 
-# def get_student_db_ES():
-#     connect_ = sqlite3.connect('Backend/UDIS.db')
-#     cursor_ = connect_.cursor()
-#     return connect_, cursor_
+def setCredentials():
+
+    window=Tk()
+    window.title("Set Credentials")
+    Label(window,text='Set User ID: ').grid(row=0,column=0,sticky=E)
+    Label(window,text='Set Password: ').grid(row=1,column=0,sticky=E)
+    Label(window,text='Confirm Password: ').grid(row=2,column=0,sticky=E)
+    idEntry=Entry(window)
+    pwEntry=Entry(window,show="*")
+    cpwEntry=Entry(window,show="*")
+
+    idEntry.grid(row=0,column=1,sticky=W)
+    pwEntry.grid(row=1,column=1,sticky=W)
+    cpwEntry.grid(row=2,column=1,sticky=W)
+    Button(window,text='Set Credentials',command=lambda:setButton(window,pwEntry,idEntry,cpwEntry)).grid(row=3,column=0,columnspan=2)
+
+    window.mainloop()
+
+def setButton(window,pwEntry,idEntry,cpwEntry):
+        id_=idEntry.get()
+        pw_=pwEntry.get()
+        cpw_=cpwEntry.get()
+        if pw_=='' and id_=='':
+            messagebox.showerror("Set Credentials", "Do not leave any fields empty")
+        else:
+            connect_,cursor_=Main.init_sql()
+            if cpw_==pw_:
+                with connect_:
+                    cursor_.execute('INSERT INTO authentication VALUES (:id,:pw)',{'id':id_,'pw':pw_})
+                window.destroy()
+            else:
+                messagebox.showerror("Set Credentials", "Password confirmation failed")
 
 
 class Main():
@@ -20,7 +49,8 @@ class Main():
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
 
-    def init_sql(self):
+    @staticmethod
+    def init_sql():
         file_name = 'Backend/UDIS.db'
         if not os.path.exists(file_name):
             connect_ = connect(file_name)
@@ -56,6 +86,16 @@ class Main():
                 cursor_.execute('''CREATE TABLE total (amount INT)''')
                 cursor_.execute('''INSERT INTO total VALUES (0)''')
 
+                cursor_.execute('''CREATE TABLE authentication (userid text NOT NULL, password NOT NULL)''')
+        
+            while True:
+                setCredentials()
+                cursor_.execute('SELECT * FROM authentication')
+                check=cursor_.fetchall()
+                if len(check)!=0:
+                    break
+                
+
         else:
             connect_ = connect(file_name)
             cursor_ = connect_.cursor()
@@ -66,8 +106,8 @@ class Main():
         return self.root
 
 if __name__ == '__main__':
+    connect_, cursor_ = Main.init_sql()
     a = Main()
-    connect_, cursor_ = a.init_sql()
     ES.ES(a.get_root())
     a.root.mainloop()
 

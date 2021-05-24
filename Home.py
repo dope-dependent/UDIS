@@ -18,7 +18,7 @@ class Home:
         self.departmentButton.grid(row=1, column=1, sticky='nsew')
 
         self.exitButton = Button(self.frame, text="Exit", command=exit)
-        self.backButton = Button(self.frame, text="Back", command=lambda: self.back(root))
+        self.backButton = Button(self.frame, text="Sign out", command=lambda: self.back(root))
 
         self.exitButton.grid(row=4, column=0, pady=10, sticky=S)
         self.backButton.grid(row=4, column=1, pady=10, sticky=S)

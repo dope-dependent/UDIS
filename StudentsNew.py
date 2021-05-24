@@ -4,6 +4,7 @@ import tkinter.ttk as ttk
 import ES
 import sqlite3
 from tkinter import messagebox
+import re
 
 
 def dropdown_defocus_StudentNew(event):
@@ -11,7 +12,7 @@ def dropdown_defocus_StudentNew(event):
 
 class StudentNew:
     def __init__(self, root):
-               
+        root.title("Add new student")
         self.parent = Frame(root)
         self.parent.grid(row=0, column=0, sticky='nsew')
        
@@ -28,9 +29,6 @@ class StudentNew:
         self.parent.rowconfigure(0,weight=1)
         self.parent.columnconfigure(0,weight=1)
         self.parent.columnconfigure(2,weight=1)
-        # root.minsize(400, 300)
-        root.maxsize(400, 400)
-        # root.geometry('800x600')
 
         self.nameLabel = Label(self.frame, text='Name',bg="white",fg="black")
         self.nameEntry = Entry(self.frame, borderwidth=1)
@@ -45,7 +43,7 @@ class StudentNew:
         self.combostyle=ttk.Style()
         self.combostyle.map('TCombobox', fieldbackground=[('readonly', 'white')])
         self.combostyle.map('TCombobox', selectbackground=[('readonly', 'white')])
-        # self.combostyle.
+        
 
         self.var=StringVar(self.frame)
         self.var.set("Select Course")
@@ -59,7 +57,15 @@ class StudentNew:
         
 
 
-        self.submitButton = Button(self.frame, text='Submit', command=lambda: self.formsubmit(root))
+        self.submitButton = Button(self.frame,
+                                   text='Submit',
+                                   command=lambda: self.submit(root,
+                                                                   self.nameEntry.get(),
+                                                                   self.rollEntry.get().upper(),
+                                                                   self.addressText.get(1.0, END).strip('\n'),
+                                                                   self.courseDropdown.get(),
+                                                                   self.yearEntry.get()))
+
         self.exitButton = Button(self.frame, text="Exit", command=exit)
         self.backButton = Button(self.frame, text="Back", command=lambda: self.back(root))
         
@@ -87,33 +93,152 @@ class StudentNew:
         self.frame.columnconfigure(0, weight=0)
         self.frame.columnconfigure(1, weight=1)
         
-        root.mainloop()
+        root.geometry("400x400")
+        root.minsize(400,400)
+        root.maxsize(400,400)
 
     def back(self, root):
         self.clear()
         root.maxsize(800, 600)
         StudentMain.StudentMain(root)
 
-    def formsubmit(self, root):
-        name_ = self.nameEntry.get()
-        roll_no_ = self.rollEntry.get().upper()
-        address_ = self.addressText.get(1.0, END).strip('\n')
-        course_ = self.courseDropdown.get()
-        year_ = self.yearEntry.get()
+    def submit(self, root, name, roll, address, course, year):
+        try:
+            self.formsubmit(name, roll, address, course, year)
+            messagebox.showinfo('Add New Student', 'Student added successfully')
+            root.maxsize(800, 600)
+            self.clear()
+            StudentMain.StudentMain(root)
+        except Exception as e:
+            messagebox.showwarning("Adding new student", e)
+
+    @staticmethod
+    def formsubmit(name, roll, address, course, year):
+        lengths = [len(i) for i in [name, roll, address, course, year]]
+
         connect_, cursor_ = ES.get_student_db_ES()
+
+        roll_f_exception = Exception('''Roll Number should be of the form [2 year digits]
+            [2 dep digits][course identifier][4 serial number digits]''')
+
+        if 0 in lengths:
+            raise Exception('One or more of the fields are blank')
+        elif len(year) != 4 or not re.compile('\d\d\d\d').search(year):
+            raise Exception('Year pattern incorrect, should be a 4-digit number')
+        elif len(roll) != 9:
+            raise Exception('Roll Number has incorrect length')
+        elif year[2:4] != roll[0:2]:
+            raise roll_f_exception
+        elif not re.compile('[A-Z][A-Z]').search(roll[2:4]):
+            raise roll_f_exception
+        elif not re.compile('\d\d\d\d').search(roll[5:9]):
+            raise roll_f_exception
+        elif course == "Select Course":
+            raise Exception("Please select the course")
+        else:
+            digit = roll[4]
+            exc = Exception('Course Identifer digit is invalid')
+            if digit not in ['1', '2', '3', '6']:
+
+                raise exc
+            elif digit == '1' and course != 'B.Tech':
+                raise exc
+            elif digit == '3' and course != 'M.Tech':
+                raise exc
+            elif digit == '6' and course != 'PhD':
+                raise exc
+            elif digit == '2' and course != 'M.Sc':
+                raise exc
+
         with connect_:
             try:
                 cursor_.execute("INSERT INTO student VALUES (:roll, :name, :address, :course, :joining)",
-                                {'roll': roll_no_, 'name': name_, 'address': address_, 'course': course_,
-                                 'joining': year_})
-                root.maxsize(800, 600)
-                # self.clear()
-            except sqlite3.IntegrityError:
-                messagebox.showwarning("ERROR", "Roll Number already exists")
+                    {'roll': roll, 'name': name, 'address': address, 'course': course, 'joining': year})
 
-            # cursor_.execute("SELECT * FROM student WHERE student_name=?", (name_,))
-            # print(cursor_.fetchall())
+            except sqlite3.IntegrityError:
+                raise Exception('Roll No already exists')
 
     def clear(self):
         self.parent.destroy()
 
+    @staticmethod
+    def test():
+        print('Unit Test for the StudentsNew Class\n')
+        success = 0
+        fail = 0
+        print('a. Roll number format checking')
+        try :
+            StudentNew.formsubmit('Kal El','21DCSYNDER','Krypton\nDC Extended Universe','PhD','2021')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        try :
+            StudentNew.formsubmit('Kal El','23CS10001','Krypton\nDC Extended Universe','PhD','2021')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        print("b. Year of admission checking")
+        try :
+            StudentNew.formsubmit('Kal El','23CS10001','Krypton\nDC Extended Universe','PhD','202b1')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        print("c. Duplicate Roll No checking")
+        try :
+            StudentNew.formsubmit('Kal El','19CS10055','Krypton\nDC Extended Universe','B.Tech','2019')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        print("d. Blank field testing")
+        try :
+            StudentNew.formsubmit('','19CS10001','Hyderabad\nTelangana\nIndia','B.Tech','2019')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        try :
+            StudentNew.formsubmit('A Ashwin Sai','19CS10001','Hyderabad\nTelangana\nIndia','B.Tech','')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        print("e. Course Identifier Testing")
+        try :
+            StudentNew.formsubmit('Kal El','19CS10075','Krypton\nDC Extended Universe','PhD','2019')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        print('f. Happy Path test')
+        try :
+            StudentNew.formsubmit('Kal El','19CS10075','Krypton\nDC Extended Universe','B.Tech','2019')
+            print('\tPASS')
+            success+=1
+        except Exception:
+            print('\tFAIL')
+            fail+=1
+
+        print(f'Test cases passed {success}/{success+fail}')
+        print(f'Percentage = {(success/(success+fail))*100}')
+
+        
+if __name__ == '__main__':
+    StudentNew.test()

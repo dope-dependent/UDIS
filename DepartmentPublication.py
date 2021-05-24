@@ -4,8 +4,13 @@ from ScrollableFrame import ScrollableFrame
 import ES
 import PublicationNew
 
+
 class DepartmentPublication(DepartmentResearch.DepartmentResearch):
     def __init__(self, root):
+
+        root.geometry('800x600')
+        root.minsize(800, 600)
+        root.maxsize(800, 600)
         root.title('UDIS-Department-Academics-Publications')
         super().__init__(root)
         self.display()
@@ -18,17 +23,17 @@ class DepartmentPublication(DepartmentResearch.DepartmentResearch):
         connect_, cursor_ = ES.get_student_db_ES()
         cursor_.execute('SELECT * FROM publications')
         allPublications = cursor_.fetchall()
-        Label(self.displayAll.frame, text='Sr. No.').grid(row=0, column=0)
-        Label(self.displayAll.frame, text='Author').grid(row=0, column=1)
-        Label(self.displayAll.frame, text='Name').grid(row=0, column=2)
-        Label(self.displayAll.frame, text='Date').grid(row=0, column=3)
+        Label(self.displayAll.frame, text='Sr. No.', relief=GROOVE).grid(row=0, column=0, sticky=E+W)
+        Label(self.displayAll.frame, text='Author', relief=GROOVE).grid(row=0, column=1, sticky=E+W)
+        Label(self.displayAll.frame, text='Name', relief=GROOVE).grid(row=0, column=2, sticky=E+W)
+        Label(self.displayAll.frame, text='Date', relief=GROOVE).grid(row=0, column=3, sticky=E+W)
 
         for i in range(len(allPublications)):
-            Label(self.displayAll.frame, anchor=W, text=i+1).grid(row=i+1, column=0)
-            Label(self.displayAll.frame, anchor=W, text=allPublications[i][0]).grid(row=i+1, column=1)
+            Label(self.displayAll.frame, anchor=W, text=i+1).grid(row=i+1, column=0, sticky=E+W, padx=2, pady=2)
+            Label(self.displayAll.frame, anchor=W, text=allPublications[i][0]).grid(row=i+1, column=1, sticky=E+W, padx=2, pady=2)
             publicationName = Label(self.displayAll.frame, anchor=W, text=allPublications[i][1])
-            publicationName.grid(row=i+1, column=2)
-            Label(self.displayAll.frame, anchor=W, text=allPublications[i][2]).grid(row=i+1, column=3)
+            publicationName.grid(row=i+1, column=2, sticky=E+W, padx=2, pady=2)
+            Label(self.displayAll.frame, anchor=W, text=allPublications[i][2]).grid(row=i+1, column=3, sticky=E+W, padx=2, pady=2)
             publicationName.bind('<Button-1>', self.bindingAction)
 
         self.displayAll.frame.columnconfigure(2, weight=2)
@@ -55,10 +60,59 @@ class DepartmentPublication(DepartmentResearch.DepartmentResearch):
         self.clear()
         PublicationNew.PublicationNew(root)
 
+    @staticmethod
+    def test():
+        connect_, cursor_ = ES.get_student_db_ES()
+        print('Testing the DepartmentPublication Class\n')
+        success = 0
+        fail = 0
+        print('a. Some fields are left empty')
+        try :
+            PublicationNew.PublicationNew.addpublication('Heuristic search through islands', 'Partha Pratim Chakraborty', '')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        try :
+            PublicationNew.PublicationNew.addpublication('', 'Partha Pratim Chakraborty', '2009')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        print('b. Publication already exists')
+        try :
+            PublicationNew.PublicationNew.addpublication('Automatic Detection of Human Fall', 'C. Mandal', '2007')
+            fail+=1
+            print('\tFAIL')
+        except Exception:
+            print('\tPASS')
+            success+=1
+
+        print('c. Happy path test')
+        try :
+            PublicationNew.PublicationNew.addpublication('Heuristic search through islands', 'Partha Pratim Chakraborty', '2009')
+            cursor_.execute('SELECT * FROM publications WHERE pub_name=(:name)', {'name': 'Heuristic search through islands'})
+            results = cursor_.fetchall()
+            if not len(results) == 1:
+                print('\tFAIL')
+                fail+=1
+            elif not (results[0][0] == 'Partha Pratim Chakraborty' and results[0][1] == 'Heuristic search through islands' and results[0][2] == '2009'):
+                print('\tFAIL')
+                fail+=1
+            else:
+                print('\tPASS')
+                success+=1
+        except Exception as e:
+            print("\tFAIL")
+            fail+=1
+
+        print(f'Test cases passed {success}/{success + fail}')
+        print(f'Percentage = {(success / (success + fail)) * 100}')
+
 
 if __name__ == '__main__':
-    root = Tk()
-    root.minsize(400, 300)
-    root.maxsize(800, 600)
-    root.geometry('800x600')
-    DepartmentPublication(root)
+    DepartmentPublication.test()

@@ -8,7 +8,7 @@ from tkinter import messagebox
 
 def dropdown_defocus_CoursesNew(event):
     event.widget.selection_clear()
-
+import ScrollableFrame
 
 class CoursesNew:
     def __init__(self, root):
@@ -29,9 +29,10 @@ class CoursesNew:
         self.parent.rowconfigure(0,weight=1)
         self.parent.columnconfigure(0,weight=1)
         self.parent.columnconfigure(2,weight=1)
-       
+
+        root.geometry('400x400')
+        root.minsize(400, 400)
         root.maxsize(400, 400)
-        
 
         self.coursecodeLabel = Label(self.frame, text='Course Code',bg="white",fg="black")
         self.coursecodeEntry = Entry(self.frame, borderwidth=0)
@@ -49,7 +50,6 @@ class CoursesNew:
         self.exitButton = Button(self.frame, text="Exit", command=exit)
         self.backButton = Button(self.frame, text="Back",
                                                   command=lambda: self.back(root))
-        
 
         self.coursecodeLabel.grid(row=2, column=0,sticky=E+S,padx=5,pady=3,)
         self.coursecodeEntry.grid(row=2, column=1, sticky=W+S+E)
@@ -73,29 +73,48 @@ class CoursesNew:
         self.frame.columnconfigure(1, weight=1)
         
         root.mainloop()
+
     def back(self, root):
         self.clear()
         root.maxsize(800, 600)
         DepartmentCourses.DepartmentCourses(root)
 
     def submit(self, root):
-        coursecode_ = self.coursecodeEntry.get().upper()
+        coursecode_ = self.coursecodeEntry.get()
         coursename_ = self.coursenameEntry.get()
-        professorname_=self.professornameEntry.get()
-        credits_=self.creditEntry.get()
-        
+        professorname_ = self.professornameEntry.get()
+        credits_ = self.creditEntry.get()
+        try:
+            CoursesNew.addcourse(coursecode_, coursename_, professorname_, credits_)
+            messagebox.showinfo('Course', coursename_ + ' added Successfully')
+            self.clear()
+            DepartmentCourses.DepartmentCourses(root)
+        except Exception as e:
+            messagebox.showwarning('Adding Course', e)
+
+    @staticmethod
+    def addcourse(coursecode_, coursename_, professorname_, credits_):
+        lengths = [len(i) for i in [coursecode_, coursename_, professorname_, credits_]]
+        if 0 in lengths:
+            raise Exception('One or more fields left blank')
 
         connect_, cursor_ = ES.get_student_db_ES()
-        with connect_:
-            try:
-                cursor_.execute("INSERT INTO all_courses VALUES (:sub_code, :course_name,:prof_name,:credits)",
-                                {'sub_code': coursecode_, 'course_name':coursename_,'prof_name': professorname_,
-                                'credits':credits_})
-                root.maxsize(800, 600)
-            except sqlite3.IntegrityError:
-                messagebox.showwarning("ERROR", "Course code already exists")
 
-            
+        cursor_.execute('SELECT * from all_courses WHERE sub_code=(:code)', {'code': coursecode_})
+        results = cursor_.fetchall()
+        if results:
+            raise Exception('A Course with the same Code already exists.')
+        try:
+            credits_ = int(credits_)
+        except Exception:
+            raise Exception('Credits is not an integer')
+        if credits_ < 0 or credits_ > 5:
+            raise Exception('Credits can only be between 1 and 5.')
+
+        with connect_:
+            cursor_.execute("INSERT INTO all_courses VALUES (:sub_code, :course_name,:prof_name,:credits)",
+                            {'sub_code': coursecode_, 'course_name': coursename_, 'prof_name': professorname_,
+                             'credits': credits_})
 
     def clear(self):
         self.parent.destroy()

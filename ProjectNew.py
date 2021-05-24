@@ -3,10 +3,17 @@ import DepartmentProject
 import sqlite3
 from tkinter import messagebox
 import ES
-
+import datetime
 
 class ProjectNew:
     def __init__(self, root):
+
+        root.title("Add Project")
+        root.geometry('400x400')
+        root.minsize(400, 400)
+        root.maxsize(400, 400)
+
+
         self.frame = Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
 
@@ -45,25 +52,53 @@ class ProjectNew:
         org_ = self.orgEntry.get()
         incharge_ = self.inchargeEntry.get()
         duration_ = self.durationEntry.get()
-        amount_ = -1 * int(self.amountEntry.get())
+        amount_ = int(self.amountEntry.get())
         date_ = self.dateEntry.get()
+        try:
+            ProjectNew.addproject(name_, org_, incharge_, duration_, amount_, date_)
+            messagebox.showinfo('Project', name_ + ' has been added.')
+            self.clear()
+            self.back(root)
+        except Exception as e:
+            messagebox.showwarning('Project', e)
+
+    @staticmethod
+    def addproject(name_, org_, incharge_, duration_, amount_, date_):
         connect_, cursor_ = ES.get_student_db_ES()
+        lengths = [len(i) for i in [name_, org_, incharge_, duration_, date_]]
+       
+        if 0 in lengths:
+            raise Exception('One or more of the fields are blank')
+        try:
+            amount_ = int(amount_)
+        except ValueError:
+            raise Exception('Amount is not a valid number')
+        if amount_ <= 0:
+            raise Exception('Amount should be a positive number')
+        cursor_.execute('SELECT * FROM total')
+        if amount_ > (cursor_.fetchone())[0]:
+            raise Exception('Unsufficient Funds')
+        cursor_.execute('SELECT * FROM projects WHERE name=(:name)', {'name': name_})
+        results = cursor_.fetchall()
+        if results:
+            raise Exception('Project with the same name already exists')
+
+        try:
+            datetime.datetime.strptime(date_, '%d/%m/%Y')
+        except Exception:
+            raise Exception('Invalid Date')
+
         with connect_:
-            try:
-                cursor_.execute('INSERT INTO projects VALUES (:org, :inc, :dur, :status, :name)',
+            cursor_.execute('INSERT INTO projects VALUES (:org, :inc, :dur, :status, :name)',
                                 {'org': org_, 'inc': incharge_, 'dur': duration_, 'status': 'Ongoing', 'name': name_})
-                # raise Insufficient Funds.
-                cursor_.execute('INSERT INTO transactions VALUES (:donor, :amount, :date, :purpose)',
-                                {'donor': org_, 'amount': amount_, 'date': date_, 'purpose': 'Project : ' + name_})
-
-                cursor_.execute('SELECT * from total')
-                amount = (cursor_.fetchone())[0]
-                # print(type(amount))
-                cursor_.execute('UPDATE total SET amount=(:n_amt) WHERE amount=(:o_amt)',
-                                {'n_amt': amount + amount_, 'o_amt': amount})
-            except sqlite3.IntegrityError:
-                messagebox.showwarning('ERROR', 'Project with this name already exists!!')
-
+            cursor_.execute('INSERT INTO transactions VALUES (:donor, :amount, :date, :purpose)',
+                                {'donor': org_, 'amount': -1 * amount_, 'date': date_, 'purpose': 'Project : ' + name_})
+            if not amount_:
+                return
+            cursor_.execute('SELECT * from total')
+            amount = (cursor_.fetchone())[0]
+            cursor_.execute('UPDATE total SET amount=(:n_amt) WHERE amount=(:o_amt)',
+                                {'n_amt': amount - amount_, 'o_amt': amount})
 
     def back(self, root):
         self.clear()

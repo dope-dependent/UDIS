@@ -16,18 +16,24 @@ class StudentGrades (StudentSearch.StudentSearch):
         super().__init__(root)
         root.mainloop()
 
-    def bindingAction(self, event):
-
-        rollAndName = event.widget.cget('text')
-        roll = rollAndName.split(' ')
+    @staticmethod
+    def getCourses(roll):
         connect_, cursor_ = ES.get_student_db_ES()
-        roll = roll[0]
-        # TODO Add register courses functionality
-
         cursor_.execute('''SELECT * FROM courses_taken WHERE roll == (:roll) AND grade == (:grade)''',
                         {'roll': roll, 'grade': 'R'})
 
         courses = cursor_.fetchall()
+        return courses
+
+    def bindingAction(self, event):
+
+        rollAndName = event.widget.cget('text')
+        roll = rollAndName.split(' ')
+
+        roll = roll[0]
+       
+
+        courses = StudentGrades.getCourses(roll)
 
         if len(courses) == 0:
             messagebox.showinfo("Enter grades for " + roll, "No grades to be entered")
@@ -36,10 +42,10 @@ class StudentGrades (StudentSearch.StudentSearch):
         popupCourse = Tk()
         popupCourse.eval('tk::PlaceWindow . center')
         popupCourse.config(bg='white')
-        popupCourse.geometry("600x460")
-        popupCourse.minsize(600, 460)
-        popupCourse.maxsize(600, 460)
-        popupCourse.title("Enter grades for " + roll)
+        popupCourse.geometry("505x460")
+        popupCourse.minsize(506, 460)
+        popupCourse.maxsize(506, 460)
+        popupCourse.title("Enter grades for " + roll[0])
 
 
         entryframe = Frame(popupCourse)
@@ -61,11 +67,11 @@ class StudentGrades (StudentSearch.StudentSearch):
         Label(courseframe.frame, text="Grade", anchor=W, padx=10, borderwidth=1, relief='solid').grid(row=0, column=3, sticky=W+E)
         for i in range(len(courses)):
             Label(courseframe.frame, text=courses[i][1], padx=10).grid(row=i+1, column=0)
-
+            conn_, cursor_ = ES.get_student_db_ES()
             cursor_.execute('SELECT * FROM all_courses WHERE sub_code == (:code)',{"code": courses[i][1]} )
             c_name = cursor_.fetchone()
             Label(courseframe.frame, text=c_name[1], anchor=W, padx=20).grid(row=i + 1, column=1, sticky=W + E)
-            print(c_name)
+            
             Label(courseframe.frame, text=courses[i][3], padx=10).grid(row=i + 1, column=2, sticky=W + E)
 
             courseDropdown.append(ttk.Combobox(courseframe.frame,
@@ -80,12 +86,12 @@ class StudentGrades (StudentSearch.StudentSearch):
             courseDropdown[i].grid(row=i+1, column=3, sticky=E+W)
 
 
-        courseframe.grid(row=1, column=0,sticky=E+W,columnspan=10)
+        courseframe.grid(row=1, column=0)
 
         submitbutton = ttk.Button(master=popupCourse,
-                                  text='Submit', command=lambda: self.submit(roll, courses, courseDropdown, popupCourse))
+                                  text='Submit', command=lambda: self.formsubmit(roll, courses, courseDropdown, popupCourse))
         submitbutton.config(padding = [5,5,5,5])
-        submitbutton.grid(row=4, column=0, columnspan=10)
+        submitbutton.grid(row=4, column=0, columnspan=1)
 
 
         popupCourse.columnconfigure(0, weight=1) # Serial Name of Course
@@ -93,25 +99,106 @@ class StudentGrades (StudentSearch.StudentSearch):
         popupCourse.columnconfigure(2, weight=1) # Credits of the Course
         popupCourse.columnconfigure(3, weight=1)
 
-    def submit(self, roll, courses, dropdown, window):
+    def formsubmit(self, roll, courses, dropdown, window):
+        grades = [c.get() for c in dropdown]
+        try:
+            StudentGrades.submit(roll, courses, grades)
+            messagebox.showinfo("Enter Grades", "Grades updated for " + roll)
+            window.destroy()
+
+        except Exception as e:
+            messagebox.showwarning("Enter grades", e)
+
+
+    @staticmethod
+    def submit(roll, courses, grades):
         conn, cursor = ES.get_student_db_ES()
+        tx = [grade=="" for grade in grades]
+        if tx.count(True) > 0:
+            raise Exception("Some columns blank while entering grades")
+
         try:
             for i in range (len(courses)):
                 with conn:
+                    if grades[i]!='F':
+                        cursor.execute('''UPDATE courses_taken
+                                          SET grade = "f"
+                                          WHERE roll ==(:roll) AND sub_code==(:sub_code) AND grade=="F"''',
+                                       {"roll" : roll,
+                                        "sub_code" : courses[i][1]})
+
                     cursor.execute('''UPDATE courses_taken
                                       SET grade = (:grade)
                                       WHERE roll==(:roll) AND sub_code==(:code) AND sem_taken==(:sem)''',
-                                   {"grade": dropdown[i].get(),
+                                   {"grade": grades[i],
                                     "roll": roll,
                                     "code": courses[i][1],
                                     "sem": courses[i][3]})
 
-            messagebox.showinfo("Enter Grades", "Grades updated for " + roll)
-            window.destroy()
-
         except sqlite3.OperationalError:
-            messagebox.showerror("Enter Grades", "sqlite3 OperationalError")
+            raise Exception("sqlite3 OperationalError")
 
+    @staticmethod
+    def test():
+        print("Unit test for StudentGrades class")
+        print("\ta. Visibility of Courses for Grading")
+        success = 0
+        fail = 0
+        c1 = StudentGrades.getCourses('19CS30037')
+        cx = [c[1] for c in c1]
+        cx2 = ['CS21004', 'CS29002']
+        try:
+            if sorted(cx) == sorted(cx2):
+                print("\tPASS")
+                success+=1
+            else:
+                print("\tFAIL")
+                fail+=1
+
+        except:
+            print("\tFAIL")
+            fail += 1
+
+        print("\tb. Empty Columns while Grading")
+        c1 = StudentGrades.getCourses('19CS10075')
+        cx = [c[1] for c in c1]
+        grades = ['A']*len(cx)
+        grades[len(grades)- 1] = ''
+        try:
+            StudentGrades.submit('19CS10075', c1, grades)
+            fail += 1
+            print("\tFAIL")
+
+        except:
+            success +=1
+            print("\tPASS")
+
+        print("\tc. Happy path, grading subjects")
+        c1 = StudentGrades.getCourses('19CS30037')
+        grades = ['A']*len(c1)
+        cx = [c[1] for c in c1]
+        f = False
+        for i in range(len(c1)):
+            if cx[i] == 'CS21004':
+                grades[i] = 'B'
+            elif cx[i] == 'CS29002':
+                grades[i] = 'A'
+            else:
+                fail += 1
+                f = True
+                print("\tFAIL")
+
+        if not f:
+            try:
+                StudentGrades.submit('19CS30037', c1, grades)
+                print("\tPASS")
+                success +=1
+            except:
+                print("\tFAIL")
+                fail +=1
+
+        print(f'Test cases passed {success}/{success + fail}')
+        print(f'Percentage = {(success / (success + fail)) * 100}')
 
 
     def back(self, root):
@@ -121,8 +208,4 @@ class StudentGrades (StudentSearch.StudentSearch):
 
 
 if __name__ == '__main__':
-    root = Tk()
-    root.minsize(400, 300)
-    root.maxsize(800, 600)
-    root.geometry('800x600')
-    StudentGrades(root)
+    StudentGrades.test()

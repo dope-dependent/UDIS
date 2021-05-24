@@ -10,9 +10,12 @@ def dropdown_defocus(event):
 
 class DepartmentInventory:
     def __init__(self,root):
+        root.title("Department Inventory")
+        root.geometry('800x600')
+        root.minsize(800, 600)
+        root.maxsize(800, 600)
         self.frame=Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
-
         self.itemnameLabel=Label(self.frame,text="Item Name: ",anchor=E)
         self.itemnameEntry=Entry(self.frame,borderwidth=0,width=27)
         self.itemtypeLabel=Label(self.frame,text="Type: ",anchor=E)
@@ -79,12 +82,9 @@ class DepartmentInventory:
             # studentRollAndName.bind('<Button-1>', self.bindingAction)   
         self.displayFrame.frame.columnconfigure(1,weight=1)  
     
-    def search(self):
+    @staticmethod
+    def getInventory(name_,type_):
         connect_, cursor_ = ES.get_student_db_ES()
-        name_ = self.itemnameEntry.get()
-        type_ = self.typeDropdown.get()
-
-        # print(name_,type_)
         if name_ == "" and type_ == "All":
             cursor_.execute("SELECT * FROM inventory")
         elif name_ != "" and type_=="All":
@@ -93,7 +93,15 @@ class DepartmentInventory:
             cursor_.execute("SELECT * FROM inventory WHERE type LIKE (:type)", {'type':'%'+type_+'%'})
         else:
             cursor_.execute("SELECT * FROM inventory WHERE item_name LIKE (:name) AND type LIKE (:type)", {'name':'%'+name_+'%', 'type':'%'+type_+'%'})
-        self.display(cursor_.fetchall())
+
+        return cursor_.fetchall()
+
+    def search(self):
+        
+        name_ = self.itemnameEntry.get()
+        type_ = self.typeDropdown.get()
+    
+        self.display(DepartmentInventory.getInventory(name_,type_))
 
     def add(self,root):
         self.clear()
@@ -102,6 +110,51 @@ class DepartmentInventory:
     def back(self,root):
         self.clear()
         DepartmentUDIS.DepartmentMainMenu(root)
+
+    @staticmethod
+    def test():
+        print("\nTesting the Department Purchase class")
+        success = 0
+        fail = 0
+        print("\ta. Blank name and type all:")
+        
+        list_=[('Pens', 'Academic Section', 100, 'Stationery', 500), ('Computer Table', 'Software Lab', 10, 'Furniture', 100)]
+        if DepartmentInventory.getInventory('','All')==list_:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL\n")
+            fail=fail+1
+        
+        print("\tb. Specific name and type all:")
+        list_=[('Pens', 'Academic Section', 100, 'Stationery', 500)]
+        if DepartmentInventory.getInventory('Pens','All')==list_:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL\n")
+            fail=fail+1
+        
+        print("\tc. No name and type specific:")
+        list_=[('Pens', 'Academic Section', 100, 'Stationery', 500)]
+        if DepartmentInventory.getInventory('','Stationery')==list_:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL\n")
+            fail=fail+1
+
+        print("\td. Name specific and type specific:")
+        list_=[('Computer Table', 'Software Lab', 10, 'Furniture', 100)]
+        if DepartmentInventory.getInventory('comp','Furniture')==list_:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL\n")
+            fail=fail+1
+        
+        print(f'Test cases passed {success}/{success+fail}')
+        print(f'Percentage = {(success/(success+fail))*100}')
 
     def clear(self):
         self.frame.destroy()

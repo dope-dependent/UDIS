@@ -4,6 +4,7 @@ from ScrollableFrame import ScrollableFrame
 
 class DepartmentResearch:
     def __init__(self, root):
+
         self.frame = Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
 
@@ -13,10 +14,10 @@ class DepartmentResearch:
         self.exitButton = Button(self.frame, text="Exit", command=exit)
         self.backButton = Button(self.frame, text="Back", command=lambda: self.back(root))
 
-        self.newButton.grid(row=1, column=0, columnspan=2)
+        self.newButton.grid(row=1, column=0, padx=50, pady = 50, columnspan=2)
         self.displayAll.grid(row=2, column=0, columnspan=2)
-        self.exitButton.grid(row=3, column=0, sticky=S + W)
-        self.backButton.grid(row=3, column=0, sticky=S + E)
+        self.exitButton.grid(row=3, column=0, padx=50, pady = 50, sticky=S + W)
+        self.backButton.grid(row=3, column=0, padx=50, pady = 50, sticky=S + E)
 
         self.frame.columnconfigure(0, weight=1)
 
@@ -28,16 +29,9 @@ class DepartmentResearch:
 
     def back(self, root):
         self.clear()
-        root.maxsize(600,500)
+        root.maxsize(1200,900)
         DepartmentAcademic.DepartmentAcademic(root)
 
     def clear(self):
         self.frame.destroy()
 
-#
-# if __name__ == '__main__':
-#     root = Tk()
-#     root.minsize(400, 300)
-#     root.maxsize(800, 600)
-#     root.geometry('800x600')
-#     DepartmentResearch(root)

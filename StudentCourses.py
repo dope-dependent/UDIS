@@ -13,23 +13,28 @@ class StudentCourses (StudentSearch.StudentSearch):
         super().__init__(root)
         root.mainloop()
 
+    @staticmethod
+    def getcourses(roll):
+        connect_, cursor_ = ES.get_student_db_ES()
+        cursor_.execute('''SELECT * FROM all_courses WHERE sub_code NOT IN (SELECT sub_code FROM courses_taken
+                                 WHERE roll=(:roll) AND grade !=(:grade))''', {'roll': roll, 'grade': 'F'})
+
+        courses = cursor_.fetchall()
+
+        return courses
     def bindingAction(self, event):
         popupCourse = Tk()
         popupCourse.eval('tk::PlaceWindow . center')
         popupCourse.config(bg='white')
-        popupCourse.geometry("600x460")
-        popupCourse.minsize(600, 460)
-        popupCourse.maxsize(600, 460)
+        popupCourse.geometry("430x460")
+        popupCourse.minsize(430, 460)
+        popupCourse.maxsize(430, 460)
         rollAndName = event.widget.cget('text')
         roll = rollAndName.split(' ')
         popupCourse.title("Register courses for " + roll[0])
-        connect_, cursor_ = ES.get_student_db_ES()
         roll = roll[0]
-        # TODO Add register courses functionality
-        cursor_.execute('''SELECT * FROM all_courses WHERE sub_code NOT IN (SELECT sub_code FROM courses_taken
-                         WHERE roll=(:roll) AND grade !=(:grade))''', {'roll': roll, 'grade': 'F'})
 
-        courses = cursor_.fetchall()
+        courses = StudentCourses.getcourses(roll)
 
         entryframe = Frame(popupCourse)
         entryframe.grid(row=0, column=0)
@@ -55,14 +60,17 @@ class StudentCourses (StudentSearch.StudentSearch):
             buttons[i].grid(row=i+1, column=3, sticky=E+W)
             buttons[i].state(['!alternate'])
 
-        courseframe.frame.columnconfigure(1,weight=1)
-        courseframe.grid(row=1, column=0,columnspan=10,sticky=E+W)
+        courseframe.grid(row=1, column=0)
 
         submitbutton = ttk.Button(master=popupCourse,
                                   text='Submit',
-                                  command= lambda : self.submit(buttons, sem, courses, roll))
+                                  command= lambda : self.formsubmit(buttons,
+                                                                    sem,
+                                                                    courses,
+                                                                    roll,
+                                                                    popupCourse))
         submitbutton.config(padding = [5,5,5,5])
-        submitbutton.grid(row=4, column=0, columnspan=10)
+        submitbutton.grid(row=4, column=0, columnspan=1)
 
 
         popupCourse.columnconfigure(0, weight=1) # Serial Name of Course
@@ -70,29 +78,39 @@ class StudentCourses (StudentSearch.StudentSearch):
         popupCourse.columnconfigure(2, weight=1) # Credits of the Course
         popupCourse.columnconfigure(3, weight=1)
 
+    def formsubmit(self, buttons_, sem, courses, roll, popupcourse):
+        try:
+            values = [button.instate(['selected']) for button in buttons_]
+            StudentCourses.submit(values, sem.get(), courses, roll)
+            messagebox.showinfo("Register courses", "Courses successfully registered")
+            popupcourse.destroy()
 
-    def submit(self, buttons_, sem, courses, roll):
-        values = [button.instate(['selected']) for button in buttons_]
+        except Exception as e:
+            messagebox.showerror("Register courses", e)
+
+
+    @staticmethod
+    def submit(values, sem, courses, roll):
         x = values.count(True)
 
         if x > 7:
-            messagebox.showwarning('Registration Error', 'A student cannot register more than 7 courses in a semester')
-            return
-        elif sem.get() == "":
-            messagebox.showwarning('Registration Error', 'Semester column is empty')
-            return
-        elif sem.get()[:3] != "AUT" and sem.get()[:3] != "SPR":
-            messagebox.showwarning('Registration Error', 'Semester values can only be AUT<year> or SPR<year>')
-            return
-
+            raise  Exception('Student cannot register more than 7 courses')
+        elif sem == "":
+            raise Exception('Registration Error', 'Semester column is empty')
+        elif sem[:3] != "AUT" and sem[:3] != "SPR":
+            raise Exception('Registration Error', 'Semester values can only be AUT<year> or SPR<year>')
         conn_, cursor_ = ES.get_student_db_ES()
+        cursor_.execute('SELECT roll FROM courses_taken WHERE grade="f" OR grade="F"')
+        if (len(cursor_.fetchall())) > 0:
+            if x > 5:
+                raise Exception('Student with backlog cannot register more than 5 courses')
 
         ### TODO Check the backlog situations after making interfaces in the database
         for i in range(len(values)):
             if values[i]:
                 course_code = courses[i][0]
                 grade = 'R'
-                seme = sem.get()
+                seme = sem
                 with conn_:
                     cursor_.execute("INSERT INTO courses_taken VALUES (:roll, :sub_code, :grade, :sem_taken)",
                                         {'roll': roll, 'sub_code': course_code, 'grade': grade, 'sem_taken': seme})
@@ -104,10 +122,151 @@ class StudentCourses (StudentSearch.StudentSearch):
         root.maxsize(800, 600)
         StudentMain.StudentMain(root)
 
+    @staticmethod
+    def test():
+        success = 0
+        failure = 0
+
+        print("\nTesting the StudentsCourses class")
+        print("\ta. Only non-cleared courses should be displayed")
+        c1 = StudentCourses.getcourses('19CS10055')
+        clist1 = [c[1] for c in c1]
+        clist2 = ['Algorithms Lab',
+                  'Switching Circuits Lab',
+                  'Software Engineering Lab',
+                  'Compilers',
+                  'Algorithms II',
+                  'Compilers Lab']
+        try:
+            if sorted(clist1) == sorted(clist2):
+                print("\tPASS")
+                success +=1
+            else:
+                print("\tFAIL")
+                failure +=1
+        except:
+            print("\tFAIL")
+            failure += 1
+
+        print("\tb. Backlogged courses are shown")
+        c1 = StudentCourses.getcourses('19CS30037')
+        clist1 = [c[1] for c in c1]
+        clist2.append('FLAT')
+        # print(clist1)
+        # print(clist2)
+        try:
+            if sorted(clist1) == sorted(clist2):
+                print("\tPASS")
+                success +=1
+            else:
+                print("\tFAIL")
+                failure +=1
+        except:
+            print("\tFAIL")
+            failure += 1
+
+        print("\tc. Cleared Backlogged courses are not shown")
+        c1 = StudentCourses.getcourses('19CS10045')
+        clist1 = [c[1] for c in c1]
+        try:
+            if 'Discrete Structures' not in clist1:
+                print("\tPASS")
+                success +=1
+            else:
+                print("\tFAIL")
+                failure +=1
+        except:
+            print("\tFAIL")
+            failure += 1
+
+        print('\td. Maximum cap on the number of courses (non-backlog)')
+        try:
+            f = False
+            try:
+                c1 = StudentCourses.getcourses('19CS10075')
+            except:
+                failure+=1
+                print("\tFAIL")
+                f = True
+            if not f:
+                StudentCourses.submit([True, True, True, True, True, True, True, True],'AUT2019', c1,'19CS10075')
+
+        except:
+            print("\tPASS")
+            success += 1
+
+        print('\te. Maximum cap on the number of courses (backlog)')
+        try:
+            f = False
+            try:
+                c1 = StudentCourses.getcourses('19CS10045')
+            except:
+                failure+=1
+                print("\tFAIL")
+                f = True
+            if not f:
+                StudentCourses.submit([True, True, True, True, True, True],'AUT2019', c1,'19CS10075')
+
+        except:
+            print("\tPASS")
+            success += 1
+
+        print('\tf. Check if all registered and not graded courses have a grade of R')
+        try:
+            c1 = StudentCourses.getcourses('19CS10075')
+            cl = [c[1] for c in c1]
+            nl = [False]*len(c1)
+            for i in range(len(cl)):
+                if cl[i] in ['PDS', 'Algorithms I', 'Discrete Structures']:
+                    nl[i] = True
+
+            StudentCourses.submit(nl, 'AUT2019', c1, '19CS10075')
+
+            conn, cursor = ES.get_student_db_ES()
+            with conn:
+                cursor.execute("SELECT grade FROM courses_taken WHERE roll='19CS10075' ")
+                cs = cursor.fetchall()
+                matrix = [c[0]=='R' for c in cs]
+                if matrix.count(True) == 3:
+                    print("\tPASS")
+                    success +=1
+                else:
+                    print("\tFAIL")
+                    failure +=1
+
+        except Exception as e:
+            print("\tFAIL")
+            failure +=1
+
+        print('\tg. Can register a backlogged course')
+        try:
+            c1 = StudentCourses.getcourses('19CS30037')
+            cx = [c[1] for c in c1]
+            nl = [False]*len(cx)
+            for i in range(len(cx)):
+                if cx[i] in ['FLAT', 'Switching Circuits Lab']:
+                    nl[i] = True
+
+            StudentCourses.submit(nl, 'AUT2020',c1, '19CS30037')
+            conn, cursor = ES.get_student_db_ES()
+            with conn:
+                cursor.execute("SELECT * FROM courses_taken WHERE roll='19CS30037' AND grade='R'")
+                cs = cursor.fetchall()
+                csx = [c[1] for c in cs]
+
+                if 'CS21004' in csx:
+                    print("\tPASS")
+                    success += 1
+                else:
+                    print("\tFAIL")
+                    failure += 1
+
+        except:
+            print('\tFAIL')
+            failure += 1
+
+        print(f'\tTest cases passed {success}/{success + failure}')
+        print(f'\tPercentage = {(success / (success + failure)) * 100}')
 
 if __name__ == '__main__':
-    root = Tk()
-    root.minsize(400, 300)
-    root.maxsize(800, 600)
-    root.geometry('800x600')
-    StudentCourses(root)
+   StudentCourses.test()

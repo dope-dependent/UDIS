@@ -7,6 +7,11 @@ import ES
 
 class PublicationNew:
     def __init__(self, root):
+        root.title("Add Publications")
+        root.geometry('400x400')
+        root.minsize(400, 400)
+        root.maxsize(400, 400)
+
         self.frame = Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
 
@@ -35,13 +40,31 @@ class PublicationNew:
         name_ = self.nameEntry.get()
         author_ = self.authorEntry.get()
         date_ = self.dateEntry.get()
+        try:
+            PublicationNew.addpublication(name_, author_, date_)
+            messagebox.showinfo('Publication', name_ + ' added successfully')
+            self.clear()
+            DepartmentPublication.DepartmentPublication(root)
+        except Exception as e:
+            messagebox.showwarning('Publication', e)
+
+    @staticmethod
+    def addpublication(name_, author_, date_):
+
+        lengths = [len(i) for i in [name_, author_, date_]]
+        if 0 in lengths:
+            raise Exception('One or more fields left blank')
+
         connect_, cursor_ = ES.get_student_db_ES()
+
+        cursor_.execute('SELECT * FROM publications WHERE pub_name=(:name)', {'name': name_})
+        results = cursor_.fetchall()
+        if results:
+            raise Exception('A publication with the same name already exists')
+
         with connect_:
-            try:
-                cursor_.execute('INSERT INTO publications VALUES (:author, :name, :date)',
+            cursor_.execute('INSERT INTO publications VALUES (:author, :name, :date)',
                                 {'author': author_, 'name': name_, 'date': date_})
-            except sqlite3.IntegrityError:
-                messagebox.showwarning('ERROR', 'Publication with this name already exists!!')
 
     def back(self, root):
         self.clear()

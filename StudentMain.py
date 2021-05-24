@@ -11,9 +11,9 @@ class StudentMain:
         root.title("UDIS - Student")
         # Only for unit testing
         #
-        # root.minsize(400, 300)
-        # root.maxsize(800, 600)
-        # root.geometry('800x600')
+        root.minsize(800, 600)
+        root.maxsize(800, 600)
+        root.geometry('800x600')
 
         self.frame = Frame(root)
         self.frame.grid(row=0, column=0, sticky='nsew')
@@ -44,17 +44,17 @@ class StudentMain:
         self.frame.rowconfigure(4, weight=1)
 
     def back(self, root):
-        print("Back")
+        
         self.clear()
         Home.Home(root)
 
     def new(self, root):
-        print("Add command \n")
+        
         self.clear()
         StudentsNew.StudentNew(root)
 
     def view(self, root):
-        print("View command \n")
+        
         self.clear()
         StudentsView.StudentsView(root)
 

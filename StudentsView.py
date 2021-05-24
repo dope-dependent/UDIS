@@ -4,6 +4,8 @@ import StudentMain
 import StudentSearch
 import enum
 from ScrollableFrame import ScrollableFrame
+import subprocess
+import os
 
 class StudentsView (StudentSearch.StudentSearch):
     def __init__(self, root):
@@ -47,7 +49,8 @@ class StudentsView (StudentSearch.StudentSearch):
         popupStudent.rowconfigure(0, weight=1)
         popupStudent.rowconfigure(7, weight=2)
 
-    def fetchPerformance(self,roll_no):
+    @staticmethod
+    def fetchPerformance(roll_no):
         connect_,cursor_=ES.get_student_db_ES()
         cursor_.execute('SELECT * FROM courses_taken WHERE roll=(:roll) AND grade!=(:grade)',{'roll':roll_no,'grade':'R'})
         allCourses=cursor_.fetchall()
@@ -70,13 +73,17 @@ class StudentsView (StudentSearch.StudentSearch):
         popupStudent.destroy()
         backlogsDict,semDict=self.fetchPerformance(roll_no)
         viewWindow=Tk()
+        viewWindow.title(student[0])
         viewWindow.maxsize(700,550)
         viewWindow.minsize(690,500)
         viewWindow.title(student[0])
         
         connect_,cursor_=ES.get_student_db_ES()
 
-        detailsFrame=Frame(viewWindow)
+        perfView=ScrollableFrame(viewWindow)
+        perfView.grid(row=1,column=0,sticky="nsew")
+
+        detailsFrame=Frame(perfView.frame)
         detailsFrame.grid(row=0,column=0,sticky=E+W)
 
         Label(detailsFrame,text='Name: '+student[1],anchor=W,relief=GROOVE).grid(row=0,column=0,columnspan=2,sticky=W+E)
@@ -87,10 +94,9 @@ class StudentsView (StudentSearch.StudentSearch):
         detailsFrame.columnconfigure(1,weight=2)
 
         
-        perfView=ScrollableFrame(viewWindow)
-        perfView.grid(row=1,column=0,sticky="nsew")
+        
         backlogsFrame=Frame(perfView.frame)
-        backlogsFrame.grid(row=0,column=0,sticky=E+W,pady=10)
+        backlogsFrame.grid(row=1,column=0,sticky=E+W,pady=10)
         Label(backlogsFrame,text="Backlogs",anchor=W,relief=GROOVE).grid(row=0,column=0,columnspan=4,sticky=E+W)
 
         if len(backlogsDict)!=0:
@@ -112,7 +118,7 @@ class StudentsView (StudentSearch.StudentSearch):
         else:
             Label(backlogsFrame,text="None",anchor=W,relief=GROOVE).grid(row=1,column=0,columnspan=4,sticky=E+W)
         backlogsFrame.columnconfigure(1,weight=1)
-        ind=2
+        ind=3
         for i in semDict:
             self.semPerformance(perfView,ind,i,semDict[i])
             ind=ind+1
@@ -123,6 +129,8 @@ class StudentsView (StudentSearch.StudentSearch):
         
         viewWindow.rowconfigure(1,weight=1)
         viewWindow.columnconfigure(0,weight=1)
+
+        Button(viewWindow,text="Save as PDF",command=lambda:self.savePDF(perfView)).grid(row=2,column=0)
 
     def semPerformance(self,perfView,row_,semname,courselist):
         connect_,cursor_=ES.get_student_db_ES()
@@ -142,10 +150,13 @@ class StudentsView (StudentSearch.StudentSearch):
         for i in courselist:
             cursor_.execute('SELECT course_name,credits FROM all_courses WHERE sub_code=(:code)',{'code':i[1]})
             info=cursor_.fetchone()
+            grade=i[2]
+            if grade=='f':
+                grade='F'
             Label(semFrame,text=i[1]).grid(row=2+ind,column=0,sticky=E+W)
             Label(semFrame,text=info[0]).grid(row=2+ind,column=1,sticky=E+W)
             Label(semFrame,text=info[1]).grid(row=2+ind,column=2,sticky=E+W)
-            Label(semFrame,text=i[2]).grid(row=2+ind,column=3,sticky=E+W)
+            Label(semFrame,text=grade).grid(row=2+ind,column=3,sticky=E+W)
             ind=ind+1
 
         semFrame.columnconfigure(1,weight=1)
@@ -176,10 +187,10 @@ class StudentsView (StudentSearch.StudentSearch):
             Label(ongoingFrame,text='Ongoing Semester: None',relief=GROOVE,anchor=W).grid(row=0,column=0,columnspan=3,sticky=E+W)
         ongoingFrame.columnconfigure(1,weight=1)
 
-    def getCGPA(self,allCourses):
-        
+    @staticmethod
+    def getCGPA(allCourses):
         connect_,cursor_=ES.get_student_db_ES()
-        gradesDict={'EX':10,'A':9,'B':8,'C':7,'D':6,'P':5,'F':0}
+        gradesDict={'EX':10,'A':9,'B':8,'C':7,'D':6,'P':5,'F':0,'f':0}
         
         coursesDict={}
         for i in allCourses:
@@ -197,12 +208,58 @@ class StudentsView (StudentSearch.StudentSearch):
         cgpa=cgpa/credits
         cgpa = "{:.2f}".format(cgpa)
         return cgpa
+    
+    def savePDF(self,perfView):
+        perfView.canvas.postscript(file="tmp.ps", colormode='color')
+        process = subprocess.Popen(["ps2pdf", "tmp.ps", "result.pdf"])
+        process.wait()
+        os.remove("tmp.ps")
 
     def back(self, root):
         self.clear()
         root.maxsize(800, 600)
         StudentMain.StudentMain(root)
 
+    @staticmethod
+    def test():
+        print("\nTesting the StudentsView class")
+        success = 0
+        fail = 0
+        allcourses=[('19CS30037', 'CS21003', 'A', 'AUT2020'), 
+                ('19CS30037', 'CS21001', 'EX', 'AUT2020'), 
+                ('19CS30037', 'CS10001', 'EX', 'AUT2020'), 
+                ('19CS30037', 'CS21004', 'F', 'SPR2021'), 
+                ('19CS30037', 'CS21002', 'A', 'SPR2021'), 
+                ('19CS30037', 'CS20006', 'C', 'SPR2021')]
+        
+        print("\ta. Computing the CGPA:")
+        if StudentsView.getCGPA(allcourses) == str(7.41):
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL")
+            fail=fail+1
+
+        backlogsDict,semDict=StudentsView.fetchPerformance('19CS10045')
+        print("\tb. Cleared backlog courses not to be shown under Backlog:")
+        if len(backlogsDict)==0:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL")
+            fail=fail+1
+        
+        backlogsDict,semDict=StudentsView.fetchPerformance('19CS30037')
+        print("\tc. Semesters seperated properly:")
+        if len(semDict)==2:
+            print("\tPASS")
+            success=success+1
+        else:
+            print("\tFAIL")
+            fail=fail+1
+
+        print(f'Test cases passed {success}/{success+fail}')
+        print(f'Percentage = {(success/(success+fail))*100}')
 
 if __name__ == '__main__':
     root = Tk()
